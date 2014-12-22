@@ -63,6 +63,23 @@ namespace Texture {
 	
 	
 	
+	/*
+		CFR texture file format
+		Byte order: big endian
+		
+		uint32_t  magic   = 0x43465254; (CFRT)
+		uint8_t   version = 1;
+		uint16_t  width;    // Texture width in pixels
+		uint16_t  height;   // Texture height in pixels
+		uint16_t  depth;    // Texture depth in pixels
+		uint8_t   channels; // Number of channels (1, 2, 3 or 4)
+		uint8_t   bytes;    // Number of bytes per color (1, 2 or 4)
+		uint8_t   pixels[width * height * depth * channels * bytes];
+		
+	*/
+	
+	
+	
 } // namespace Texture
 
 #endif // _TEXTURE_CFRT_HPP_
