@@ -28,8 +28,6 @@ int main(int argc, char* args[]) {
 	sf::Vector2u resolution(cfrt.getWidth(), cfrt.getHeight());
 	if (resolution.x > resolutionMax.x) resolution.x = resolutionMax.x;
 	if (resolution.y > resolutionMax.y) resolution.y = resolutionMax.y;
-	if (resolution.x < resolutionMin.x) resolution.x = resolutionMin.x;
-	if (resolution.y < resolutionMin.y) resolution.y = resolutionMin.y;
 	sf::Vector2f scale(
 		resolution.x / (float) cfrt.getWidth(),
 		resolution.y / (float) cfrt.getHeight()
@@ -41,6 +39,8 @@ int main(int argc, char* args[]) {
 		scale.x = scale.y;
 		resolution.x = cfrt.getWidth() * scale.x;
 	}
+	if (resolution.x < resolutionMin.x) resolution.x = resolutionMin.x;
+	if (resolution.y < resolutionMin.y) resolution.y = resolutionMin.y;
 	
 	/* Create sprite */
 	sf::Texture spriteTexture;
