@@ -304,62 +304,82 @@ std::istream& operator>>(std::istream& in, OBJ::Render::TraceObject& obj)
 
 /* Material objects */
 
-std::istream& operator>>(std::istream& in, OBJ::Material::NewMaterial& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::NewMaterial& obj)
 {
 	return in >> obj.name;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::AmbientColor& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::AmbientColor& obj)
 {
 	return in >> obj.r >> obj.g >> obj.b;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::DiffuseColor& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::DiffuseColor& obj)
 {
 	return in >> obj.r >> obj.g >> obj.b;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::SpecularColor& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::SpecularColor& obj)
 {
 	return in >> obj.r >> obj.g >> obj.b;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::Dissolve& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::EmissionColor& obj)
+{
+	return in >> obj.r >> obj.g >> obj.b;
+}
+
+std::istream& operator>>(std::istream& in, OBJ::MTL::Dissolve& obj)
 {
 	return in >> obj.value;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::IlluminationModel& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::IlluminationModel& obj)
 {
 	return in >> obj.model;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::AmbientMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::SpecularExponent& obj)
+{
+	return in >> obj.value;
+}
+
+std::istream& operator>>(std::istream& in, OBJ::MTL::RefractionIndex& obj)
+{
+	return in >> obj.value;
+}
+
+std::istream& operator>>(std::istream& in, OBJ::MTL::TransmittionFilter& obj)
+{
+	return in >> obj.r >> obj.g >> obj.b;
+}
+
+std::istream& operator>>(std::istream& in, OBJ::MTL::AmbientMap& obj)
 {
 	return in >> obj.file;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::DiffuseMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::DiffuseMap& obj)
 {
 	return in >> obj.file;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::SpecularColorMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::SpecularColorMap& obj)
 {
 	return in >> obj.file;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::SpeculaHighlightMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::SpeculaHighlightMap& obj)
 {
 	return in >> obj.file;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::AlphaMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::AlphaMap& obj)
 {
 	return in >> obj.file;
 }
 
-std::istream& operator>>(std::istream& in, OBJ::Material::BumpMap& obj)
+std::istream& operator>>(std::istream& in, OBJ::MTL::BumpMap& obj)
 {
 	return in >> obj.file;
 }

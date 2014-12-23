@@ -2,7 +2,7 @@
 #ifndef _OBJ_TRIANGLEREADER_HPP_
 #define _OBJ_TRIANGLEREADER_HPP_
 
-#include "Reader.hpp"
+#include "Parser.hpp"
 
 namespace OBJ {
 	
@@ -22,7 +22,7 @@ namespace OBJ {
 	
 	
 	/* Triangle reader for obj files */
-	class TriangleReader : public virtual ObjectReader {
+	class TriangleReader : public virtual OBJParser {
 	protected:
 		
 		/* Called for each triangle */

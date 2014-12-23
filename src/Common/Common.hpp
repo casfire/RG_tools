@@ -8,6 +8,8 @@
 #include "Texture/Base.hpp"
 #include "Texture/CFRT.hpp"
 #include "Popup.hpp"
+#include "OBJ/TriangleReader.hpp"
+#include "OBJ/MaterialReader.hpp"
 
 std::string getSuffix(const std::string &str, char c);
 std::string getPrefix(const std::string &str, char c);
