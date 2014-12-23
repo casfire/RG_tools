@@ -211,9 +211,9 @@ void Texture::Base::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
-	case 1: accessSet8 (Pixel8 (p), pixels.data() + offset, channels);
-	case 2: accessSet16(Pixel16(p), pixels.data() + offset, channels);
-	case 4: accessSet32(Pixel32(p), pixels.data() + offset, channels);
+	case 1: accessSet8 (Pixel8 (p), pixels.data() + offset, channels); break;
+	case 2: accessSet16(Pixel16(p), pixels.data() + offset, channels); break;
+	case 4: accessSet32(Pixel32(p), pixels.data() + offset, channels); break;
 	}
 }
 
@@ -221,9 +221,9 @@ void Texture::Base::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
-	case 1: accessSet8 (p,           pixels.data() + offset, channels);
-	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels);
-	case 4: accessSet32(p.pixel32(), pixels.data() + offset, channels);
+	case 1: accessSet8 (p,           pixels.data() + offset, channels); break;
+	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels); break;
+	case 4: accessSet32(p.pixel32(), pixels.data() + offset, channels); break;
 	}
 }
 
@@ -231,9 +231,9 @@ void Texture::Base::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
-	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels);
-	case 2: accessSet16(p,           pixels.data() + offset, channels);
-	case 4: accessSet32(p.pixel32(), pixels.data() + offset, channels);
+	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels); break;
+	case 2: accessSet16(p,           pixels.data() + offset, channels); break;
+	case 4: accessSet32(p.pixel32(), pixels.data() + offset, channels); break;
 	}
 }
 
@@ -241,9 +241,9 @@ void Texture::Base::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
-	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels);
-	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels);
-	case 4: accessSet32(p,           pixels.data() + offset, channels);
+	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels); break;
+	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels); break;
+	case 4: accessSet32(p,           pixels.data() + offset, channels); break;
 	}
 }
 

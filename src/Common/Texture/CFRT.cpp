@@ -43,7 +43,6 @@ void Texture::CFRT::saveToFile(const std::string &file) const
 		stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 		stream.open(file, std::ios::binary);
 		stream << *this;
-		stream.good();
 		stream.close();
 	} catch (std::ios::failure &fail) {
 		throw CFRTException("IO error: " + std::string(fail.what()));
