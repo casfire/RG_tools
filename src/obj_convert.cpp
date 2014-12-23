@@ -2,17 +2,6 @@
 #include "Common/Common.hpp"
 #include <iostream>
 
-class Materials : public OBJ::MaterialReader {
-protected:
-	
-	void parse(OBJ::Material &m) override;
-	
-private:
-	
-	std::vector<OBJ::Material> materials;
-	
-};
-
 class Triangles : public OBJ::TriangleReader {
 	
 	bool parse(OBJ::Triangle &t) override;
@@ -24,7 +13,7 @@ class Triangles : public OBJ::TriangleReader {
 private:
 	
 	std::vector<OBJ::Triangle> triangles;
-	Materials materials;
+	OBJ::MaterialSaver materials;
 	
 };
 
@@ -40,10 +29,6 @@ int main(int argc, char* args[]) {
 	triangles.read(args[1], std::cout);
 	
 	return 0;
-}
-
-void Materials::parse(OBJ::Material &m) {
-	materials.push_back(m);
 }
 
 bool Triangles::parse(OBJ::Triangle &t) {

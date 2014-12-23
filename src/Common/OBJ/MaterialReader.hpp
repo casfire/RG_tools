@@ -5,6 +5,8 @@
 #include "Objects.hpp"
 #include "Parser.hpp"
 #include <string>
+#include <map>
+#include <exception>
 
 namespace OBJ {
 	
@@ -74,6 +76,37 @@ namespace OBJ {
 	private:
 		
 		Material current;
+		
+	};
+	
+	
+	
+	/* Stores all parsed materials */
+	class MaterialSaver : public MaterialReader {
+	public:
+		
+		const Material& find(const std::string &name) const;
+		void clear();
+		
+	protected:
+		
+		void parse(Material &m) override;
+		std::map<std::string, Material> materials;
+		
+	};
+	
+	
+	
+	/* Thrown by MaterialSaver::find() */
+	class MaterialNotFoundException : public std::exception {
+	public:
+		
+		MaterialNotFoundException(const std::string &name);
+		const char* what() const throw();
+		
+	private:
+		
+		std::string name;
 		
 	};
 	
