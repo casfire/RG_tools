@@ -54,7 +54,7 @@ namespace CFR {
 	
 	/*
 		CFR geometry file format
-		Byte order: big endian
+		Byte order: little endian
 		
 		uint32_t  magic = 0x43465247;
 		uint8_t   version = 1;

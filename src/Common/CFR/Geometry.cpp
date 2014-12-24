@@ -91,17 +91,17 @@ inline uint8_t read8(std::istream &in) {
 
 inline uint16_t read16(std::istream &in) {
 	uint16_t t = 0;
+	t |= static_cast<uint16_t>(in.get()) << 0;
 	t |= static_cast<uint16_t>(in.get()) << 8;
-	t |= static_cast<uint16_t>(in.get());
 	return t;
 }
 
 inline uint32_t read32(std::istream &in) {
 	uint32_t t = 0;
-	t |= static_cast<uint32_t>(in.get()) << 24;
-	t |= static_cast<uint32_t>(in.get()) << 16;
+	t |= static_cast<uint32_t>(in.get()) << 0;
 	t |= static_cast<uint32_t>(in.get()) << 8;
-	t |= static_cast<uint32_t>(in.get());
+	t |= static_cast<uint32_t>(in.get()) << 16;
+	t |= static_cast<uint32_t>(in.get()) << 24;
 	return t;
 }
 
@@ -115,15 +115,15 @@ inline void write8(std::ostream &out, uint8_t v) {
 }
 
 inline void write16(std::ostream &out, uint16_t v) {
-	write8(out, static_cast<uint8_t>((v >> 8) & 0xFF));
 	write8(out, static_cast<uint8_t>((v >> 0) & 0xFF));
+	write8(out, static_cast<uint8_t>((v >> 8) & 0xFF));
 }
 
 inline void write32(std::ostream &out, uint32_t v) {
-	write8(out, static_cast<uint8_t>((v >> 24) & 0xFF));
-	write8(out, static_cast<uint8_t>((v >> 16) & 0xFF));
-	write8(out, static_cast<uint8_t>((v >> 8 ) & 0xFF));
 	write8(out, static_cast<uint8_t>((v >> 0 ) & 0xFF));
+	write8(out, static_cast<uint8_t>((v >> 8 ) & 0xFF));
+	write8(out, static_cast<uint8_t>((v >> 16) & 0xFF));
+	write8(out, static_cast<uint8_t>((v >> 24) & 0xFF));
 }
 
 inline void writeFloat(std::ostream &out, float v) {

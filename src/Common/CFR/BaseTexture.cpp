@@ -14,28 +14,28 @@ using CFR::Pixel32;
 
 inline Uint16 get16(const Uint8 *pixels) {
 	return
-		  (static_cast<Uint16>(pixels[0]) << 8)
-		| (static_cast<Uint16>(pixels[1]) << 0);
+		  (static_cast<Uint16>(pixels[0]) << 0)
+		| (static_cast<Uint16>(pixels[1]) << 8);
 }
 
 inline Uint32 get32(const Uint8 *pixels) {
 	return
-		  (static_cast<Uint32>(pixels[0]) << 24)
-		| (static_cast<Uint32>(pixels[1]) << 16)
-		| (static_cast<Uint32>(pixels[2]) << 8 )
-		| (static_cast<Uint32>(pixels[3]) << 0 );
+		  (static_cast<Uint32>(pixels[0]) << 0)
+		| (static_cast<Uint32>(pixels[1]) << 8)
+		| (static_cast<Uint32>(pixels[2]) << 16)
+		| (static_cast<Uint32>(pixels[3]) << 24);
 }
 
 inline void set16(Uint16 value, Uint8 *pixels) {
-	pixels[0] = static_cast<Uint8>(value >> 8);
-	pixels[1] = static_cast<Uint8>(value >> 0);
+	pixels[0] = static_cast<Uint8>(value >> 0);
+	pixels[1] = static_cast<Uint8>(value >> 8);
 }
 
 inline void set32(Uint32 value, Uint8 *pixels) {
-	pixels[0] = static_cast<Uint8>(value >> 24);
-	pixels[1] = static_cast<Uint8>(value >> 16);
-	pixels[2] = static_cast<Uint8>(value >> 8 );
-	pixels[3] = static_cast<Uint8>(value >> 0 );
+	pixels[0] = static_cast<Uint8>(value >> 0);
+	pixels[1] = static_cast<Uint8>(value >> 8);
+	pixels[2] = static_cast<Uint8>(value >> 16);
+	pixels[3] = static_cast<Uint8>(value >> 24);
 }
 
 inline Pixel8 accessGet8(const Uint8 *pixels, size_type channels) {
