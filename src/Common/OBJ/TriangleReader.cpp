@@ -23,7 +23,6 @@ bool OBJ::TriangleReader::parse(OBJ::Triangle&)
 {
 	return false;
 }
-
 bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 {
 	bool status = true;
@@ -35,7 +34,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 		
 		OBJ::Triangle t;
 		
-		if (a.v < 0) a.v = geometry.size() - a.v;
+		if (a.v < 0) a.v = 1 + geometry.size() + a.v;
 		if (static_cast<std::size_t>(a.v) > geometry.size() || a.v == 0) {
 			status = false;
 			continue;
@@ -46,7 +45,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 		t.a.hasTexture = a.hasTexture;
 		t.a.hasNormal = a.hasNormal;
 		if (a.hasTexture) {
-			if (a.vt < 0) a.vt = texture.size() - a.vt;
+			if (a.vt < 0) a.vt = 1 + texture.size() + a.vt;
 			if (static_cast<std::size_t>(a.vt) > texture.size() || a.vt == 0) {
 				status = false;
 				continue;
@@ -55,7 +54,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 			t.a.v = texture[a.vt - 1].v;
 		}
 		if (a.hasNormal) {
-			if (a.vn < 0) a.vn = normal.size() - a.vn;
+			if (a.vn < 0) a.vn = 1 + normal.size() + a.vn;
 			if (static_cast<std::size_t>(a.vn) > normal.size() || a.vn == 0) {
 				status = false;
 				continue;
@@ -65,7 +64,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 			t.a.k = normal[a.vn - 1].k;
 		}
 		
-		if (b.v < 0) b.v = geometry.size() - b.v;
+		if (b.v < 0) b.v = 1 + geometry.size() + b.v;
 		if (static_cast<std::size_t>(b.v) > geometry.size() || b.v == 0) {
 			status = false;
 			continue;
@@ -76,7 +75,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 		t.b.hasTexture = b.hasTexture;
 		t.b.hasNormal = b.hasNormal;
 		if (b.hasTexture) {
-			if (b.vt < 0) b.vt = texture.size() - b.vt;
+			if (b.vt < 0) b.vt = 1 + texture.size() + b.vt;
 			if (static_cast<std::size_t>(b.vt) > texture.size() || b.vt == 0) {
 				status = false;
 				continue;
@@ -85,7 +84,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 			t.b.v = texture[b.vt - 1].v;
 		}
 		if (b.hasNormal) {
-			if (b.vn < 0) b.vn = normal.size() - b.vn;
+			if (b.vn < 0) b.vn = 1 + normal.size() + b.vn;
 			if (static_cast<std::size_t>(b.vn) > normal.size() || b.vn == 0) {
 				status = false;
 				continue;
@@ -95,7 +94,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 			t.b.k = normal[b.vn - 1].k;
 		}
 		
-		if (c.v < 0) c.v = geometry.size() - c.v;
+		if (c.v < 0) c.v = 1 + geometry.size() + c.v;
 		if (static_cast<std::size_t>(c.v) > geometry.size() || c.v == 0) {
 			status = false;
 			continue;
@@ -106,7 +105,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 		t.c.hasTexture = c.hasTexture;
 		t.c.hasNormal = c.hasNormal;
 		if (c.hasTexture) {
-			if (c.vt < 0) c.vt = texture.size() - c.vt;
+			if (c.vt < 0) c.vt = 1 + texture.size() + c.vt;
 			if (static_cast<std::size_t>(c.vt) > texture.size() || c.vt == 0) {
 				status = false;
 				continue;
@@ -115,7 +114,7 @@ bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 			t.c.v = texture[c.vt - 1].v;
 		}
 		if (c.hasNormal) {
-			if (c.vn < 0) c.vn = normal.size() - c.vn;
+			if (c.vn < 0) c.vn = 1 + normal.size() + c.vn;
 			if (static_cast<std::size_t>(c.vn) > normal.size() || c.vn == 0) {
 				status = false;
 				continue;
