@@ -23,6 +23,7 @@ bool OBJ::TriangleReader::parse(OBJ::Triangle&)
 {
 	return false;
 }
+
 bool OBJ::TriangleReader::parse(OBJ::Element::Face &e)
 {
 	bool status = true;

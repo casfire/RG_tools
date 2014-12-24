@@ -92,7 +92,7 @@ bool OBJ::TokenParser::parse(const std::string& line)
 	std::vector<char> copy(line.size() + 1);
 	for (std::size_t i = 0; i < length; i++) copy[i] = line[i];
 	copy[length] = '\0';
-	char* s = static_cast<char*>(&copy[0]);
+	char* s = copy.data();
 	
 	/* Remove comment */
 	for (std::size_t i = 0; i < length; i++) {
