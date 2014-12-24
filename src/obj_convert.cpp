@@ -74,8 +74,8 @@ bool Converter::parse(OBJ::Triangle &t)
 	);
 	
 	geometry.addElement(a);
-	geometry.addElement(b);
 	geometry.addElement(c);
+	geometry.addElement(b);
 	
 	return true;
 }
