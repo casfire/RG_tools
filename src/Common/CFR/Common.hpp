@@ -73,7 +73,7 @@ namespace CFR {
 	
 	
 	/* CFR Base exception */
-	class Exception {
+	class Exception : public std::exception {
 	public:
 		
 		Exception(const std::string &info);

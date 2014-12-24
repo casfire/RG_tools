@@ -49,7 +49,7 @@ void CFR::Geometry::setVertexType(
 	if (positionCount > 3) throw CFR::Exception("Invalid position count.");
 	if (normalCount   > 3) throw CFR::Exception("Invalid normal count.");
 	if (textureCount  > 3) throw CFR::Exception("Invalid texture count.");
-	elementType = 
+	vertexType = 
 		  (positionCount & 0b00000011) << 0
 		| (normalCount   & 0b00000011) << 2
 		| (textureCount  & 0b00000011) << 4;
@@ -200,6 +200,8 @@ std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
 		throw CFR::Exception("Number of vertices is too big.");
 	} else if (elementType > 6) {
 		throw CFR::Exception("Invalid element type.");
+	} else if (vertexBytes == 0) {
+		throw CFR::Exception("There are no bytes per vertex.");
 	}
 	
 	write32(out, 0x43465247);
