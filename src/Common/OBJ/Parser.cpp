@@ -1,63 +1,90 @@
 #include "Parser.hpp"
-#include <fstream>
 #include <sstream>
-#include <cstddef> // std::size_t
+#include <fstream>
+
+struct nullbuf : std::streambuf {
+	virtual int_type overflow(int_type c) {
+		return traits_type::not_eof(c);
+	}
+};
+
+nullbuf ostream_sink_buf;
+std::ostream ostream_sink(&ostream_sink_buf);
+
+inline std::string getTokenPrefix(const std::string &path)
+{
+	std::string::size_type n = path.rfind('/');
+	if (n == std::string::npos) n = path.rfind('\\');
+	if (n == path.size() || n == std::string::npos) {
+		return path;
+	} else {
+		return path.substr(n + 1, std::string::npos);
+	}
+}
 
 
 
 /* OBJ::TokenParser */
 
-bool OBJ::TokenParser::read(const std::string& filename)
+OBJ::TokenParser::TokenParser()
+: logger(&ostream_sink), lineNumber(0)
+{}
+
+void OBJ::TokenParser::read(const std::string& filename)
 {
-	std::ofstream sink;
-	return read(filename, sink);
+	read(filename, ostream_sink);
 }
 
-bool OBJ::TokenParser::read(const std::string& filename, std::ostream& log)
+void OBJ::TokenParser::read(const std::string& filename, std::ostream& log)
 {
-	bool status = false;
+	prefix = getTokenPrefix(filename);
 	std::ifstream file;
-	log << "[" << prefix() << "] Opening " << filename << " for reading.\n";
+	log << "[" << prefix << "] Opening " << filename << " for reading.\n";
 	file.open(filename, std::ios::in);
 	if (file.is_open()) {
-		status = read(file, log);
-		if (file.bad()) {
-			log << "[" << prefix() << "] Error occured while reading " << filename << ".\n";
-		}
-		log << "[" << prefix() << "] Closing " << filename << ".\n";
+		read(file, log);
+		if (file.bad()) log << "[" << prefix << "] IO Error.\n";
+		log << "[" << prefix << "] Closing.\n";
 		file.close();
 	} else {
-		log << "[" << prefix() << "] Failed to open " << filename << " for reading.\n";
+		log << "[" << prefix << "] Failed to open for reading.\n";
 	}
 	log << std::flush;
-	return status;
 }
 
-bool OBJ::TokenParser::read(std::istream& source)
+void OBJ::TokenParser::read(std::istream& source)
 {
-	std::ofstream sink;
-	return read(source, sink);
+	read(source, ostream_sink);
 }
 
-bool OBJ::TokenParser::read(std::istream& source, std::ostream& log)
+void OBJ::TokenParser::read(std::istream& source, std::ostream& log)
 {
-	bool status = true;
-	std::size_t count = 0;
+	logger = &log;
+	lineNumber = 0;
 	for (std::string line; std::getline(source, line); ) {
-		count++;
-		if (!this->line(line)) {
-			log << "[" << prefix() << "] Invalid line " << count << ": " << line << "\n";
-			status = false;
-		}
+		lineNumber++;
+		if (parse(line)) continue;
+		if (!prefix.empty()) log << "[" << prefix << "] ";
+		log << "Invalid line " << lineNumber << ": " << line << "\n";
 	}
 	done();
-	return !source.bad() && status;
+	logger = &ostream_sink;
 }
 
 void OBJ::TokenParser::done()
 {}
 
-bool OBJ::TokenParser::line(const std::string& line)
+std::ostream& OBJ::TokenParser::getLogger() const
+{
+	return *logger;
+}
+
+std::size_t OBJ::TokenParser::getLineNumber() const
+{
+	return lineNumber;
+}
+
+bool OBJ::TokenParser::parse(const std::string& line)
 {
 	std::size_t length = static_cast<std::size_t>(line.size());
 	
@@ -99,11 +126,6 @@ bool OBJ::TokenParser::line(const std::string& line)
 
 
 /* OBJ::OBJParser */
-
-const char* OBJ::OBJParser::prefix()
-{
-	return "OBJ";
-}
 
 template<typename T>
 bool OBJ::OBJParser::parser(std::istream& in)
@@ -167,11 +189,6 @@ bool OBJ::OBJParser::parse(OBJ::Render::TraceObject&) { return false;}
 
 
 /* OBJ::MTLParser */
-
-const char* OBJ::MTLParser::prefix()
-{
-	return "MTL";
-}
 
 template<typename T>
 bool OBJ::MTLParser::parser(std::istream& in)

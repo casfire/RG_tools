@@ -5,6 +5,7 @@
 #include "Common.hpp"
 #include "BaseGeometry.hpp"
 #include <vector>
+#include <string>
 #include <istream>
 #include <ostream>
 
@@ -28,7 +29,16 @@ namespace CFR {
 		
 		/* Set types */
 		void setVertexType (Uint8 type);
+		void setVertexType (
+			Uint8 positionCount,
+			Uint8 normalCount,
+			Uint8 textureCount
+		);
 		void setElementType(Uint8 type);
+		
+		/* Load/Save geometry - throws CFR::Exception */
+		void loadFromFile(const std::string &file);
+		void   saveToFile(const std::string &file) const;
 		
 		/* Stream insertion/extraction */
 		friend std::istream& ::operator>>(std::istream&, Geometry&);

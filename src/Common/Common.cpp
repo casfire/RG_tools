@@ -24,7 +24,13 @@ std::string getPrefix(const std::string &str, char c)
 
 std::string getOnlyFile(const std::string &path)
 {
-	return getSuffix(getSuffix(path, '\\'), '/');
+	std::string::size_type n = path.rfind('/');
+	if (n == std::string::npos) n = path.rfind('\\');
+	if (n == path.size() || n == std::string::npos) {
+		return path;
+	} else {
+		return path.substr(n + 1, std::string::npos);
+	}
 }
 
 sf::Image textureToImage(const CFR::BaseTexture &from, CFR::size_type z)

@@ -6,7 +6,7 @@ int main(int argc, char* args[]) {
 	
 	/* Check arguments */
 	if (argc != 2) {
-		Popup("Error!", "No input files.").show();
+		Popup("Error!", "No input file.").show();
 		return 0;
 	}
 	

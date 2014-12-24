@@ -9,10 +9,11 @@ namespace OBJ {
 	
 	
 	struct TriangleVertex {
-		float x, y, z; // Geometry
-		float u, v;    // Texture
-		float i, j, k; // Normal
-		bool hasTexture, hasNormal;
+		float x = 0.f, y = 0.f, z = 0.f; // Geometry
+		float u = 0.f, v = 0.f;          // Texture
+		float i = 0.f, j = 0.f, k = 0.f; // Normal
+		bool hasTexture = false;
+		bool hasNormal  = false;
 	};
 	
 	struct Triangle {

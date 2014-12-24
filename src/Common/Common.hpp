@@ -7,11 +7,12 @@
 #include <string>
 #include "Popup.hpp"
 #include "CFR/Texture.hpp"
+#include "CFR/Geometry.hpp"
 #include "OBJ/TriangleReader.hpp"
 #include "OBJ/MaterialReader.hpp"
 
-std::string getSuffix(const std::string &str, char c);
-std::string getPrefix(const std::string &str, char c);
+std::string getSuffix  (const std::string &str, char c);
+std::string getPrefix  (const std::string &str, char c);
 std::string getOnlyFile(const std::string &path);
 
 sf::Image      textureToImage(const CFR::BaseTexture &from, CFR::size_type z = 0);

@@ -6,14 +6,15 @@
 #include <string>
 #include <istream>
 #include <ostream>
+#include <cstddef> // std::size_t
 
 namespace OBJ {
 	
 	
 	
 	class TokenParser;
-	class ObjectParser;
-	class MaterialParser;
+	class OBJParser;
+	class MTLParser;
 	
 	
 	
@@ -22,24 +23,29 @@ namespace OBJ {
 	
 	
 	
-	/* Base reader */
+	/* Base token parser */
 	class TokenParser {
 	public:
 		
-		bool read(const std::string &filename);
-		bool read(const std::string &filename, std::ostream &log);
-		bool read(std::istream &source);
-		bool read(std::istream &source, std::ostream &log);
+		TokenParser();
+		void read(const std::string &filename);
+		void read(const std::string &filename, std::ostream &log);
+		void read(std::istream &source);
+		void read(std::istream &source, std::ostream &log);
+		std::ostream& getLogger() const;
+		std::size_t getLineNumber() const;
 		
 	protected:
 		
 		virtual void done();
-		virtual const char* prefix() = 0;
 		virtual bool token(const std::string &t, std::istream &in) = 0;
 		
 	private:
 		
-		bool line(const std::string &line);
+		bool parse(const std::string &line);
+		std::string prefix;
+		std::ostream *logger;
+		std::size_t lineNumber;
 		
 	};
 	
@@ -80,7 +86,6 @@ namespace OBJ {
 		template<typename T>
 		bool parser(std::istream& in);
 		bool token(const std::string &t, std::istream &in) override;
-		const char* prefix() override;
 		
 	};
 	
@@ -112,7 +117,6 @@ namespace OBJ {
 		template<typename T>
 		bool parser(std::istream& in);
 		bool token(const std::string& t, std::istream& in) override;
-		const char* prefix() override;
 		
 	};
 	

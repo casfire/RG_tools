@@ -1,4 +1,5 @@
 #include "Geometry.hpp"
+#include <fstream>
 
 using CFR::size_type;
 using CFR::Uint8;
@@ -38,6 +39,46 @@ void CFR::Geometry::setVertexType(Uint8 type)
 void CFR::Geometry::setElementType(Uint8 type)
 {
 	elementType = type;
+}
+
+void CFR::Geometry::setVertexType(
+	Uint8 positionCount,
+	Uint8 normalCount,
+	Uint8 textureCount)
+{
+	if (positionCount > 3) throw CFR::Exception("Invalid position count.");
+	if (normalCount   > 3) throw CFR::Exception("Invalid normal count.");
+	if (textureCount  > 3) throw CFR::Exception("Invalid texture count.");
+	elementType = 
+		  (positionCount & 0b00000011) << 0
+		| (normalCount   & 0b00000011) << 2
+		| (textureCount  & 0b00000011) << 4;
+}
+
+void CFR::Geometry::loadFromFile(const std::string &file)
+{
+	try {
+		std::ifstream stream;
+		stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		stream.open(file, std::ios::binary);
+		stream >> *this;
+		stream.close();
+	} catch (std::ios::failure &fail) {
+		throw CFR::Exception("IO error: " + std::string(fail.what()));
+	}
+}
+
+void CFR::Geometry::saveToFile(const std::string &file) const
+{
+	try {
+		std::ofstream stream;
+		stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		stream.open(file, std::ios::binary);
+		stream << *this;
+		stream.close();
+	} catch (std::ios::failure &fail) {
+		throw CFR::Exception("IO error: " + std::string(fail.what()));
+	}
 }
 
 
