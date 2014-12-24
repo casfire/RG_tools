@@ -1,12 +1,12 @@
-#include "Base.hpp"
+#include "BaseTexture.hpp"
 
-using Texture::size_type;
-using Texture::Uint8;
-using Texture::Uint16;
-using Texture::Uint32;
-using Texture::Pixel8;
-using Texture::Pixel16;
-using Texture::Pixel32;
+using CFR::size_type;
+using CFR::Uint8;
+using CFR::Uint16;
+using CFR::Uint32;
+using CFR::Pixel8;
+using CFR::Pixel16;
+using CFR::Pixel32;
 
 
 
@@ -88,18 +88,18 @@ inline void accessSet32(Pixel32 pixel, Uint8 *pixels, size_type channels) {
 
 
 
-/* Texture::Base */
+/* CFR::BaseTexture */
 
-Texture::Base::Base()
+CFR::BaseTexture::BaseTexture()
 : width(0), height(0), depth(0), channels(3), bytes(1)
 {}
 
-Texture::Base::Base(const Base &copy)
+CFR::BaseTexture::BaseTexture(const BaseTexture &copy)
 : width(copy.width), height(copy.height), depth(copy.depth),
   channels(copy.channels), bytes(copy.bytes)
 {}
 
-Texture::Base::Base(
+CFR::BaseTexture::BaseTexture(
 	size_type width, size_type height, size_type depth,
 	size_type channels, size_type bytes)
 : width(width), height(height), depth(depth),
@@ -107,49 +107,49 @@ Texture::Base::Base(
   pixels(width * height * depth * channels * bytes)
 {}
 
-Texture::Base::~Base()
+CFR::BaseTexture::~BaseTexture()
 {}
 
-void* Texture::Base::getRawPixels()
+void* CFR::BaseTexture::getRawPixels()
 {
 	return static_cast<void*>(pixels.data());
 }
 
-const void* Texture::Base::getRawPixels() const
+const void* CFR::BaseTexture::getRawPixels() const
 {
 	return static_cast<const void*>(pixels.data());
 }
 
-size_type Texture::Base::getRawSize() const
+size_type CFR::BaseTexture::getRawSize() const
 {
 	return width * height * depth * channels * bytes;
 }
 
-size_type Texture::Base::getWidth() const
+size_type CFR::BaseTexture::getWidth() const
 {
 	return width;
 }
-size_type Texture::Base::getHeight() const
+size_type CFR::BaseTexture::getHeight() const
 {
 	return height;
 }
 
-size_type Texture::Base::getDepth() const
+size_type CFR::BaseTexture::getDepth() const
 {
 	return depth;
 }
 
-size_type Texture::Base::getChannels() const
+size_type CFR::BaseTexture::getChannels() const
 {
 	return channels;
 }
 
-size_type Texture::Base::getBytes() const
+size_type CFR::BaseTexture::getBytes() const
 {
 	return bytes;
 }
 
-void Texture::Base::resize(
+void CFR::BaseTexture::resize(
 	size_type width, size_type height, size_type depth ,
 	size_type channels, size_type bytes)
 {
@@ -163,7 +163,7 @@ void Texture::Base::resize(
 	pixels.resize(width * height * depth * channels * bytes);
 }
 
-Uint32 Texture::Base::getPixel(size_type x, size_type y, size_type z) const
+Uint32 CFR::BaseTexture::getPixel(size_type x, size_type y, size_type z) const
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -174,7 +174,7 @@ Uint32 Texture::Base::getPixel(size_type x, size_type y, size_type z) const
 	}
 }
 
-Pixel8 Texture::Base::getPixel8(size_type x, size_type y, size_type z) const
+Pixel8 CFR::BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -185,7 +185,7 @@ Pixel8 Texture::Base::getPixel8(size_type x, size_type y, size_type z) const
 	}
 }
 
-Pixel16 Texture::Base::getPixel16(size_type x, size_type y, size_type z) const
+Pixel16 CFR::BaseTexture::getPixel16(size_type x, size_type y, size_type z) const
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -196,7 +196,7 @@ Pixel16 Texture::Base::getPixel16(size_type x, size_type y, size_type z) const
 	}
 }
 
-Pixel32 Texture::Base::getPixel32(size_type x, size_type y, size_type z) const
+Pixel32 CFR::BaseTexture::getPixel32(size_type x, size_type y, size_type z) const
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -207,7 +207,7 @@ Pixel32 Texture::Base::getPixel32(size_type x, size_type y, size_type z) const
 	}
 }
 
-void Texture::Base::setPixel(Uint32 p, size_type x, size_type y, size_type z)
+void CFR::BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -217,7 +217,7 @@ void Texture::Base::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 	}
 }
 
-void Texture::Base::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
+void CFR::BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -227,7 +227,7 @@ void Texture::Base::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
 	}
 }
 
-void Texture::Base::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
+void CFR::BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -237,7 +237,7 @@ void Texture::Base::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
 	}
 }
 
-void Texture::Base::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
+void CFR::BaseTexture::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -245,128 +245,4 @@ void Texture::Base::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
 	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels); break;
 	case 4: accessSet32(p,           pixels.data() + offset, channels); break;
 	}
-}
-
-
-
-/* Conversions */
-
-inline Uint32 to32From8(Uint8 value) {
-	Uint32 v = static_cast<Uint32>(value);
-	return (v << 0) | (v << 8) | (v << 16) | (v << 24);
-}
-
-inline Uint32 to32From16(Uint16 value) {
-	Uint32 v = static_cast<Uint32>(value);
-	return (v << 0) | (v << 16);
-}
-
-inline Uint16 to16From8(Uint8 value) {
-	Uint16 v = static_cast<Uint16>(value);
-	return (v << 0) | (v << 8);
-}
-
-inline Uint16 to16From32(Uint32 value) {
-	return static_cast<Uint16>((value >> 16) & 0xFFFF);
-}
-
-inline Uint8 to8From16(Uint16 value) {
-	return static_cast<Uint8>((value >> 8) & 0xFF);
-}
-
-inline Uint8 to8From32(Uint32 value) {
-	return static_cast<Uint8>((value >> 24) & 0xFF);
-}
-
-inline Uint8  toRed   (Uint32 p) { return static_cast<Uint8>((p >> 24) & 0xFF); }
-inline Uint8  toGreen (Uint32 p) { return static_cast<Uint8>((p >> 16) & 0xFF); }
-inline Uint8  toBlue  (Uint32 p) { return static_cast<Uint8>((p >> 8 ) & 0xFF); }
-inline Uint8  toAlpha (Uint32 p) { return static_cast<Uint8>((p >> 0 ) & 0xFF); }
-inline Uint32 toPixel (Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-	return
-		  (static_cast<Uint32>(r) << 24)
-		| (static_cast<Uint32>(g) << 16)
-		| (static_cast<Uint32>(b) << 8)
-		| (static_cast<Uint32>(a) << 0);
-}
-
-
-
-/* Texture::Pixel8 */
- 
-Pixel8::Pixel8(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-: r(r), g(g), b(b), a(a)
-{}
-
-Pixel8::Pixel8(Uint32 p)
-: r(toRed(p)), g(toGreen(p)), b(toBlue(p)), a(toAlpha(p))
-{}
-
-Uint32 Pixel8::pixel() const
-{
-	return toPixel(r, g, b, a);
-}
-
-Pixel16 Pixel8::pixel16() const
-{
-	return Pixel16(to16From8(r), to16From8(g), to16From8(b), to16From8(a));
-}
-
-Pixel32 Pixel8::pixel32() const
-{
-	return Pixel32(to32From8(r), to32From8(g), to32From8(b), to32From8(a));
-}
-
-
-
-/* Texture::Pixel16 */
-
-Pixel16::Pixel16(Uint16 r, Uint16 g, Uint16 b, Uint16 a)
-: r(r), g(g), b(b), a(a)
-{}
-
-Pixel16::Pixel16(Uint32 p)
-: r(to16From8(toRed(p))), g(to16From8(toGreen(p))), b(to16From8(toBlue(p))), a(to16From8(toAlpha(p)))
-{}
-
-Uint32 Pixel16::pixel() const
-{
-	return toPixel(to8From16(r), to8From16(g), to8From16(b), to8From16(a));
-}
-
-Pixel8 Pixel16::pixel8() const
-{
-	return Pixel8(to8From16(r), to8From16(g), to8From16(b), to8From16(a));
-}
-
-Pixel32 Pixel16::pixel32() const
-{
-	return Pixel32(to32From16(r), to32From16(g), to32From16(b), to32From16(a));
-}
-
-
-
-/* Texture::Pixel32 */
-
-Pixel32::Pixel32(Uint32 r, Uint32 g, Uint32 b, Uint32 a)
-: r(r), g(g), b(b), a(a)
-{}
-
-Pixel32::Pixel32(Uint32 p)
-: r(to32From8(toRed(p))), g(to32From8(toGreen(p))), b(to32From8(toBlue(p))), a(to32From8(toAlpha(p)))
-{}
-
-Uint32 Pixel32::pixel() const
-{
-	return toPixel(to8From32(r), to8From32(g), to8From32(b), to8From32(a));
-}
-
-Pixel8 Pixel32::pixel8() const
-{
-	return Pixel8(to8From32(r), to8From32(g), to8From32(b), to8From32(a));
-}
-
-Pixel16 Pixel32::pixel16() const
-{
-	return Pixel16(to16From32(r), to16From32(g), to16From32(b), to16From32(a));
 }

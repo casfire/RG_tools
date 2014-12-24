@@ -1,34 +1,28 @@
 #pragma once
-#ifndef _TEXTURE_CFRT_HPP_
-#define _TEXTURE_CFRT_HPP_
+#ifndef _CFR_TEXTURE_HPP_
+#define _CFR_TEXTURE_HPP_
 
-#include "Base.hpp"
+#include "Common.hpp"
+#include "BaseTexture.hpp"
 #include <istream>
 #include <ostream>
-#include <exception>
 #include <string>
 
-namespace Texture { class CFRT; }
-std::istream& operator>>(std::istream& in, Texture::CFRT& obj);
-std::ostream& operator<<(std::ostream& out, const Texture::CFRT& obj);
+std::istream& operator>>(std::istream& in, CFR::Texture& obj);
+std::ostream& operator<<(std::ostream& out, const CFR::Texture& obj);
 
-namespace Texture {
-	
-	
-	
-	class CFRT;
-	class CFRTException;
+namespace CFR {
 	
 	
 	
 	/* CFR Texture */
-	class CFRT : public Base {
+	class Texture : public BaseTexture {
 	public:
 		
 		/* Constructors */
-		CFRT();
-		CFRT(const Base &copy);
-		CFRT(
+		Texture();
+		Texture(const BaseTexture &copy);
+		Texture(
 			size_type width,
 			size_type height,
 			size_type depth = 1,
@@ -36,28 +30,13 @@ namespace Texture {
 			size_type bytes = 1
 		);
 		
-		/* Load/Save texture - throws CFRTException */
+		/* Load/Save texture - throws CFR::Exception */
 		void loadFromFile(const std::string &file);
 		void   saveToFile(const std::string &file) const;
 		
 		/* Stream insertion/extraction */
-		friend std::istream& ::operator>>(std::istream&, CFRT&);
-		friend std::ostream& ::operator<<(std::ostream&, const CFRT&);
-		
-	};
-	
-	
-	
-	/* Thrown when loading or saving fails */
-	class CFRTException : public std::exception {
-	public:
-		
-		CFRTException(const std::string &info);
-		const char* what() const throw();
-		
-	private:
-		
-		const std::string exceptionInfo;
+		friend std::istream& ::operator>>(std::istream&, Texture&);
+		friend std::ostream& ::operator<<(std::ostream&, const Texture&);
 		
 	};
 	
@@ -80,6 +59,6 @@ namespace Texture {
 	
 	
 	
-} // namespace Texture
+} // namespace CFR
 
-#endif // _TEXTURE_CFRT_HPP_
+#endif // _CFR_TEXTURE_HPP_

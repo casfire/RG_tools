@@ -4,7 +4,6 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "font.h"
 
 class Popup {
 public:

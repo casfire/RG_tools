@@ -11,10 +11,10 @@ int main(int argc, char* args[]) {
 	}
 	
 	/* Load texture */
-	Texture::CFRT cfrt;
+	CFR::Texture cfrt;
 	try {
 		cfrt.loadFromFile(args[1]);
-	} catch (Texture::CFRTException &fail) {
+	} catch (CFR::Exception &fail) {
 		Popup("Error!", fail.what()).show();
 		return 0;
 	}

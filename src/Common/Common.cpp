@@ -27,13 +27,13 @@ std::string getOnlyFile(const std::string &path)
 	return getSuffix(getSuffix(path, '\\'), '/');
 }
 
-sf::Image textureToImage(const Texture::Base &from, Texture::size_type z)
+sf::Image textureToImage(const CFR::BaseTexture &from, CFR::size_type z)
 {
 	std::vector<std::uint8_t> pixels(from.getWidth() * from.getHeight() * 4);
 	for (std::size_t y = 0; y < from.getHeight(); y++) {
 		for (std::size_t x = 0; x < from.getWidth(); x++) {
 			std::size_t offset = 4 * x + 4 * y * from.getWidth();
-			Texture::Pixel8 pixel = from.getPixel8(x, y, z);
+			CFR::Pixel8 pixel = from.getPixel8(x, y, z);
 			if (from.getChannels() == 1) {
 				pixel.g = pixel.r;
 				pixel.b = pixel.r;
@@ -50,7 +50,7 @@ sf::Image textureToImage(const Texture::Base &from, Texture::size_type z)
 	return image;
 }
 
-const char* getChannelName(Texture::size_type channels) {
+const char* getChannelName(CFR::size_type channels) {
 	switch (channels) {
 	case 0:  return "NONE";
 	case 1:  return "GRAYSCALE"; 
@@ -61,9 +61,9 @@ const char* getChannelName(Texture::size_type channels) {
 	}
 }
 
-Texture::size_type findChannels(const sf::Image &image)
+CFR::size_type findChannels(const sf::Image &image)
 {
-	Texture::size_type channels = 0;
+	CFR::size_type channels = 0;
 	sf::Vector2u size = image.getSize();
 	sf::Color last = image.getPixel(0, 0);
 	for (unsigned y = 0; y < size.y; y++) {

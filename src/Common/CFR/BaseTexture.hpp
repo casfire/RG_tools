@@ -1,34 +1,22 @@
 #pragma once
-#ifndef _TEXTURE_BASE_HPP_
-#define _TEXTURE_BASE_HPP_
+#ifndef _CFR_BASETEXTURE_HPP_
+#define _CFR_BASETEXTURE_HPP_
 
+#include "Common.hpp"
 #include <vector>
-#include <cstddef> // std::size_t
-#include <cstdint> // std::uintX_t
 
-namespace Texture {
-	
-	
-	
-	typedef std::size_t   size_type;
-	typedef std::uint8_t  Uint8;
-	typedef std::uint16_t Uint16;
-	typedef std::uint32_t Uint32;
-	struct Pixel8;
-	struct Pixel16;
-	struct Pixel32;
-	class  Base;
+namespace CFR {
 	
 	
 	
 	/* Base texture object to store pixels */
-	class Base {
+	class BaseTexture {
 	public:
 		
 		/* Constructors */
-		Base();
-		Base(const Base &copy);
-		Base(
+		BaseTexture();
+		BaseTexture(const BaseTexture &copy);
+		BaseTexture(
 			size_type width,
 			size_type height,
 			size_type depth = 1,
@@ -37,7 +25,7 @@ namespace Texture {
 		);
 		
 		/* Virtual destructor */
-		virtual ~Base();
+		virtual ~BaseTexture();
 		
 		/* Raw pixels */
 		void* getRawPixels();
@@ -88,38 +76,6 @@ namespace Texture {
 	
 	
 	
-	/* 8-bit pixel */
-	struct Pixel8 {
-		Uint8 r, g, b, a;
-		Pixel8(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
-		Pixel8(Uint32 pixel);
-		Uint32  pixel()   const;
-		Pixel16 pixel16() const;
-		Pixel32 pixel32() const;
-	};
-	
-	/* 16-bit pixel */
-	struct Pixel16 {
-		Uint16 r, g, b, a;
-		Pixel16(Uint16 r, Uint16 g, Uint16 b, Uint16 a = 0xFFFF);
-		Pixel16(Uint32 pixel);
-		Uint32  pixel()   const;
-		Pixel8  pixel8()  const;
-		Pixel32 pixel32() const;
-	};
-	
-	/* 32-bit pixel */
-	struct Pixel32 {
-		Uint32 r, g, b, a;
-		Pixel32(Uint32 r, Uint32 g, Uint32 b, Uint32 a = 0xFFFFFFFF);
-		Pixel32(Uint32 pixel);
-		Uint32  pixel()   const;
-		Pixel8  pixel8()  const;
-		Pixel16 pixel16() const;
-	};
-	
-	
-	
-};
+} // namespace CFR
 
-#endif // _TEXTURE_BASE_HPP_
+#endif // _CFR_BASETEXTURE_HPP_

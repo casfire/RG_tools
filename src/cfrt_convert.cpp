@@ -14,7 +14,7 @@ bool convert(const std::string &path) {
 	}
 	
 	/* Create CFRT */
-	Texture::CFRT cfrt(
+	CFR::Texture cfrt(
 		image.getSize().x, image.getSize().y, 1,
 		findChannels(image), 1
 	);
@@ -25,7 +25,7 @@ bool convert(const std::string &path) {
 		for (unsigned x = 0; x < size.x; x++) {
 			sf::Color pixel = image.getPixel(x, y);
 			cfrt.setPixel8(
-				Texture::Pixel8(pixel.r, pixel.g, pixel.b, pixel.a),
+				CFR::Pixel8(pixel.r, pixel.g, pixel.b, pixel.a),
 				x, y, 0
 			);
 		}
@@ -34,7 +34,7 @@ bool convert(const std::string &path) {
 	/* Save */
 	try {
 		cfrt.saveToFile(cfrtFile);
-	} catch (Texture::CFRTException &fail) {
+	} catch (CFR::Exception &fail) {
 		Popup(
 			"Error!",
 			"Failed to save " + getOnlyFile(cfrtFile)

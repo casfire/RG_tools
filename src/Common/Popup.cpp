@@ -1,4 +1,5 @@
 #include "Popup.hpp"
+#include "font.h"
 
 Popup::Popup(
 	const std::string &title,
