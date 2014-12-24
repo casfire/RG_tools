@@ -19,9 +19,13 @@ namespace CFR {
 	struct Pixel8;
 	struct Pixel16;
 	struct Pixel32;
+	struct Vertex;
+	class  Exception;
 	class  BaseTexture;
 	class  Texture;
-	class  Exception;
+	class  BaseGeometry;
+	class  Geometry;
+	
 	
 	
 	/* 8-bit pixel */
@@ -52,6 +56,18 @@ namespace CFR {
 		Uint32  pixel()   const;
 		Pixel8  pixel8()  const;
 		Pixel16 pixel16() const;
+	};
+	
+	/* Geometry vertex */
+	struct Vertex {
+		float position[3];
+		float normal  [3];
+		float texture [3];
+		Vertex(
+			float px = 0.f, float py = 0.f, float pz = 0.f,
+			float nx = 0.f, float ny = 0.f, float nz = 0.f,
+			float tx = 0.f, float ty = 0.f, float tz = 0.f
+		);
 	};
 	
 	

@@ -134,6 +134,26 @@ Pixel16 Pixel32::pixel16() const
 
 
 
+/* CFR::Vertex */
+
+CFR::Vertex::Vertex(
+	float px, float py, float pz,
+	float nx, float ny, float nz,
+	float tx, float ty, float tz)
+{
+	position[0] = px;
+	position[1] = py;
+	position[2] = pz;
+	normal[0]   = nx;
+	normal[1]   = ny;
+	normal[2]   = nz;
+	texture[0]  = tx;
+	texture[1]  = ty;
+	texture[2]  = tz;
+}
+
+
+
 /* CFR::Exception */
 
 CFR::Exception::Exception(const std::string &info)
