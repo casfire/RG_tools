@@ -91,7 +91,7 @@ inline void write32(std::ostream &out, uint32_t v) {
 
 std::istream& operator>>(std::istream& in, CFR::Texture& obj)
 {
-	if (read32(in) != 0x43465254) {
+	if (read32(in) != 0x54524643) {
 		throw CFR::Exception("Invalid magic number.");
 	} else if (read8(in) != 1) {
 		throw CFR::Exception("Invalid version.");
@@ -120,7 +120,7 @@ std::ostream& operator<<(std::ostream& out, const CFR::Texture& obj)
 	} else if (obj.getBytes() == 3 || obj.getBytes() > 4) {
 		throw CFR::Exception("Invalid number of bytes per color.");
 	}
-	write32(out, 0x43465254);
+	write32(out, 0x54524643);
 	write8 (out, 1);
 	write16(out, static_cast<uint16_t>(obj.getWidth()));
 	write16(out, static_cast<uint16_t>(obj.getHeight()));

@@ -46,7 +46,7 @@ namespace CFR {
 		CFR texture file format
 		Byte order: little endian
 		
-		uint32_t  magic   = 0x43465254; (CFRT)
+		uint32_t  magic   = 0x54524643; // CFRT
 		uint8_t   version = 1;
 		uint16_t  width;    // Texture width in pixels
 		uint16_t  height;   // Texture height in pixels

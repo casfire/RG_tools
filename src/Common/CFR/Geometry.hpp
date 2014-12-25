@@ -56,7 +56,7 @@ namespace CFR {
 		CFR geometry file format
 		Byte order: little endian
 		
-		uint32_t  magic = 0x43465247;
+		uint32_t  magic = 0x47524643; // CFRG
 		uint8_t   version = 1;
 		uint32_t  elementCount; // Number of elements
 		uint8_t   elementBytes; // Number of bytes per element (1, 2 or 4)

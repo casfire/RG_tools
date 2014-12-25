@@ -133,7 +133,7 @@ inline void writeFloat(std::ostream &out, float v) {
 
 std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 {
-	if (read32(in) != 0x43465247) {
+	if (read32(in) != 0x47524643) {
 		throw CFR::Exception("Invalid magic number.");
 	} else if (read8(in) != 1) {
 		throw CFR::Exception("Invalid version.");
@@ -204,7 +204,7 @@ std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
 		throw CFR::Exception("There are no bytes per vertex.");
 	}
 	
-	write32(out, 0x43465247);
+	write32(out, 0x47524643);
 	write8 (out, 1);
 	write32(out, elementCount);
 	write8 (out, elementBytes);
