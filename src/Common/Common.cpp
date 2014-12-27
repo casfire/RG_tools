@@ -75,10 +75,11 @@ CFR::size_type findChannels(const sf::Image &image)
 	for (unsigned y = 0; y < size.y; y++) {
 		for (unsigned x = 0; x < size.x; x++) {
 			sf::Color pixel = image.getPixel(x, y);
-			if (channels == 0 && pixel.r != last.r) channels = 1;
-			if (channels == 1 && pixel.r != pixel.g && pixel.g != last.g) channels = 2;
-			if (channels == 2 && pixel.g != pixel.b && pixel.b != last.b) channels = 3;
-			if (channels == 3 && pixel.b != pixel.a && pixel.a != last.a) return 4;
+			if (channels <= 0 && pixel.r != last.r) channels = 1;
+			if (channels <= 1 && pixel.r != pixel.g && pixel.g != last.g) channels = 2;
+			if (channels <= 2 && pixel.g != pixel.b && pixel.b != last.b) channels = 3;
+			if (channels <= 3 && pixel.b != pixel.a && pixel.a != last.a) return 4;
+			last = pixel;
 		}
 	}
 	return channels;
