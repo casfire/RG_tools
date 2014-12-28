@@ -37,7 +37,7 @@ bool convert(const std::string &path) {
 	} catch (CFR::Exception &fail) {
 		Popup(
 			"Error!",
-			"Failed to save " + getOnlyFile(cfrtFile)
+			"Failed to save " + removePath(cfrtFile)
 			+ ": " + to_string(fail.what())
 		).show();
 		return false;

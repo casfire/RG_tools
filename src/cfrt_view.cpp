@@ -50,7 +50,7 @@ int main(int argc, char* args[]) {
 	sprite.setPosition(resolution.x / 2.f, resolution.y / 2.f);
 	
 	/* Create window */
-	std::string title = getOnlyFile(args[1])
+	std::string title = removePath(args[1])
 		+ " - " + to_string(cfrt.getWidth())
 		+ " x " + to_string(cfrt.getHeight())
 		+ " x " + to_string(cfrt.getDepth())
