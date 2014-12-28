@@ -4,6 +4,7 @@
 
 #include <cstddef> // std::size_t
 #include <cstdint> // std::uintX_t
+#include <functional> // std::hash
 #include <exception>
 #include <string>
 
@@ -60,14 +61,20 @@ namespace CFR {
 	
 	/* Geometry vertex */
 	struct Vertex {
-		float position[3];
-		float normal  [3];
-		float texture [3];
+		float px, py, pz; // Position
+		float nx, ny, nz; // Normal
+		float u, v;       // Texture coordinates
+		float tx, ty, tz; // Tangent
+		float bx, by, bz; // Binormal
 		Vertex(
 			float px = 0.f, float py = 0.f, float pz = 0.f,
 			float nx = 0.f, float ny = 0.f, float nz = 0.f,
-			float tx = 0.f, float ty = 0.f, float tz = 0.f
+			float u  = 0.f, float v  = 0.f,
+			float tx = 0.f, float ty = 0.f, float tz = 0.f,
+			float bx = 0.f, float by = 0.f, float bz = 0.f
 		);
+		bool operator <(const CFR::Vertex&) const;
+		bool operator==(const CFR::Vertex&) const;
 	};
 	
 	
@@ -88,5 +95,13 @@ namespace CFR {
 	
 	
 } // namespace CFR
+
+namespace std {
+	template<> struct hash<CFR::Vertex> {
+		typedef CFR::Vertex argument_type;
+		typedef std::hash<float>::result_type result_type;
+		result_type operator()(const CFR::Vertex&) const;
+	};
+}
 
 #endif // _CFR_COMMON_HPP_

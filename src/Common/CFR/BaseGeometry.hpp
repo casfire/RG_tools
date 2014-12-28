@@ -4,6 +4,7 @@
 
 #include "Common.hpp"
 #include <vector>
+#include <unordered_map>
 
 namespace CFR {
 	
@@ -20,24 +21,10 @@ namespace CFR {
 		void addElement(Uint32 element);
 		
 		/* Add vertex and return its element */
-		Uint32 addVertex(const Vertex &vertex);
-		Uint32 addVertex(
-			float px = 0.f, float py = 0.f, float pz = 0.f,
-			float nx = 0.f, float ny = 0.f, float nz = 0.f,
-			float tx = 0.f, float ty = 0.f, float tz = 0.f
-		);
+		virtual Uint32 pushVertex(const Vertex &v);
 		
 		/* Either add or find a similar vertex and return its element */
-		Uint32 addSimilarVertex(
-			const Vertex &vertex,
-			float error = 0.001, size_type start = 0, size_type end = 0
-		);
-		Uint32 addSimilarVertex(
-			float px = 0.f, float py = 0.f, float pz = 0.f,
-			float nx = 0.f, float ny = 0.f, float nz = 0.f,
-			float tx = 0.f, float ty = 0.f, float tz = 0.f,
-			float error = 0.001, size_type start = 0, size_type end = 0
-		);
+		virtual Uint32 addVertex(const Vertex &v);
 		
 		/* Reserve space */
 		void reserveVertices(size_type count);
@@ -45,6 +32,9 @@ namespace CFR {
 		
 		/* Delete everything */
 		void clear();
+		
+		/* Remove duplicate vertices */
+		void recalculate();
 		
 		/* Getters */
 		bool empty() const;
@@ -57,6 +47,7 @@ namespace CFR {
 	private:
 		
 		std::vector<Vertex> vertices;
+		std::unordered_map<Vertex, Uint32> vertexElements; 
 		std::vector<Uint32> elements;
 		Uint32 elementMax;
 		

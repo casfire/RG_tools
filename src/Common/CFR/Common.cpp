@@ -7,6 +7,7 @@ using CFR::Uint32;
 using CFR::Pixel8;
 using CFR::Pixel16;
 using CFR::Pixel32;
+using CFR::Vertex;
 
 
 
@@ -136,20 +137,58 @@ Pixel16 Pixel32::pixel16() const
 
 /* CFR::Vertex */
 
-CFR::Vertex::Vertex(
+Vertex::Vertex(
 	float px, float py, float pz,
 	float nx, float ny, float nz,
-	float tx, float ty, float tz)
+	float u,  float v,
+	float tx, float ty, float tz,
+	float bx, float by, float bz)
+: px(px), py(py), pz(pz),
+  nx(nx), ny(ny), nz(nz),
+  u(u),   v(v),
+  tx(tx), ty(ty), tz(tz),
+  bx(bx), by(by), bz(bz)
+{}
+
+bool Vertex::operator <(const CFR::Vertex &obj) const
 {
-	position[0] = px;
-	position[1] = py;
-	position[2] = pz;
-	normal[0]   = nx;
-	normal[1]   = ny;
-	normal[2]   = nz;
-	texture[0]  = tx;
-	texture[1]  = ty;
-	texture[2]  = tz;
+	std::hash<Vertex>::result_type hashA = std::hash<Vertex>()(*this);
+	std::hash<Vertex>::result_type hashB = std::hash<Vertex>()(obj);
+	if (hashA == hashB) {
+		return std::equal_to<CFR::Vertex>()(*this, obj);
+	} else {
+		return hashA < hashB;
+	}
+}
+
+bool Vertex::operator==(const CFR::Vertex &b) const
+{
+	const Vertex& a = *this;
+	return
+		   a.px == b.px && a.py == b.py && a.pz == b.pz
+		&& a.nx == b.nx && a.ny == b.ny && a.nz == b.nz
+		&& a.u  == b.u  && a.v  == b.v
+		&& a.tx == b.tx && a.ty == b.ty && a.tz == b.tz
+		&& a.bx == b.bx && a.by == b.by && a.bz == b.bz;
+}
+
+std::hash<Vertex>::result_type std::hash<Vertex>::operator()(Vertex const& v) const
+{
+	return 
+		  (std::hash<float>()(v.px) * 0x8AF785E7)
+		^ (std::hash<float>()(v.py) * 0x200CD333)
+		^ (std::hash<float>()(v.pz) * 0x0AE9ED1B)
+		^ (std::hash<float>()(v.nx) * 0xE4492C33)
+		^ (std::hash<float>()(v.ny) * 0xF201058D)
+		^ (std::hash<float>()(v.nz) * 0xFD0B4D09)
+		^ (std::hash<float>()(v.u ) * 0x20ADB3A9)
+		^ (std::hash<float>()(v.v ) * 0x6E63CBD1)
+		^ (std::hash<float>()(v.tx) * 0xEF7A6E89)
+		^ (std::hash<float>()(v.ty) * 0xAE028975)
+		^ (std::hash<float>()(v.tz) * 0x07EECD6F)
+		^ (std::hash<float>()(v.bx) * 0xF380DC15)
+		^ (std::hash<float>()(v.bx) * 0xE17BBD23)
+		^ (std::hash<float>()(v.bz) * 0xBC154D09);
 }
 
 
