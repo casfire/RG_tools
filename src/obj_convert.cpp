@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 
-class Converter : public OBJ::TriangleReader {
+class Converter : public OBJ::ElementReader {
 public:
 	
 	CFR::Geometry geometry;
@@ -64,29 +64,29 @@ bool Converter::parse(OBJ::Triangle &t)
 	}
 	
 	CFR::Uint32 a = geometry.addSimilarVertex(
-		t.a.x, t.a.y, t.a.z,
-		t.a.i, t.a.j, t.a.k,
-		t.a.u, t.a.v, 0.f,
+		t.a.position.x, t.a.position.y, t.a.position.z,
+		t.a.normal.x,   t.a.normal.y,   t.a.normal.z,
+		t.a.texture.x,  t.a.texture.y,  0.f,
 		0.001f, vertexStart
 	);
 	
 	CFR::Uint32 b = geometry.addSimilarVertex(
-		t.b.x, t.b.y, t.b.z,
-		t.b.i, t.b.j, t.b.k,
-		t.b.u, t.b.v, 0.f,
+		t.b.position.x, t.b.position.y, t.b.position.z,
+		t.b.normal.x,   t.b.normal.y,   t.b.normal.z,
+		t.b.texture.x,  t.b.texture.y,  0.f,
 		0.001f, vertexStart
 	);
 	
 	CFR::Uint32 c = geometry.addSimilarVertex(
-		t.c.x, t.c.y, t.c.z,
-		t.c.i, t.c.j, t.c.k,
-		t.c.u, t.c.v, 0.f,
+		t.c.position.x, t.c.position.y, t.c.position.z,
+		t.c.normal.x,   t.c.normal.y,   t.c.normal.z,
+		t.c.texture.x,  t.c.texture.y,  0.f,
 		0.001f, vertexStart
 	);
 	
 	geometry.addElement(a);
-	geometry.addElement(c);
 	geometry.addElement(b);
+	geometry.addElement(c);
 	
 	if (geometry.getVertexCount() - vertexStart > maxVertexPerObject) {
 		vertexStart = geometry.getVertexCount();

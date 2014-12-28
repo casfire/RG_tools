@@ -8,7 +8,7 @@
 #include "Popup.hpp"
 #include "CFR/Texture.hpp"
 #include "CFR/Geometry.hpp"
-#include "OBJ/TriangleReader.hpp"
+#include "OBJ/ElementReader.hpp"
 #include "OBJ/MaterialReader.hpp"
 
 std::string getSuffix  (const std::string &str, char c);
