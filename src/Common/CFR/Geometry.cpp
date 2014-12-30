@@ -93,20 +93,20 @@ void Geometry::saveToFile(const std::string &file) const
 
 Vertex Geometry::compressVertex(Vertex v)
 {
-	v.px = typeFloatCompress(v.px, typePosition);
-	v.py = typeFloatCompress(v.py, typePosition);
-	v.pz = typeFloatCompress(v.pz, typePosition);
-	v.u  = typeFloatCompress(v.u,  typeTexcoord);
-	v.v  = typeFloatCompress(v.v,  typeTexcoord);
-	v.nx = typeFloatCompress(v.nx, typeNormal);
-	v.ny = typeFloatCompress(v.ny, typeNormal);
-	v.nz = typeFloatCompress(v.nz, typeNormal);
-	v.tx = typeFloatCompress(v.tx, typeTangent);
-	v.ty = typeFloatCompress(v.ty, typeTangent);
-	v.tz = typeFloatCompress(v.tz, typeTangent);
-	v.bx = typeFloatCompress(v.bx, typeBinormal);
-	v.by = typeFloatCompress(v.by, typeBinormal);
-	v.bz = typeFloatCompress(v.bz, typeBinormal);
+	v.position.x = typeFloatCompress(v.position.x, typePosition);
+	v.position.y = typeFloatCompress(v.position.y, typePosition);
+	v.position.z = typeFloatCompress(v.position.z, typePosition);
+	v.texcoord.x = typeFloatCompress(v.texcoord.x, typeTexcoord);
+	v.texcoord.y = typeFloatCompress(v.texcoord.y, typeTexcoord);
+	v.normal.x   = typeFloatCompress(v.normal.x,   typeNormal);
+	v.normal.y   = typeFloatCompress(v.normal.y,   typeNormal);
+	v.normal.z   = typeFloatCompress(v.normal.z,   typeNormal);
+	v.tangent.x  = typeFloatCompress(v.tangent.x,  typeTangent);
+	v.tangent.y  = typeFloatCompress(v.tangent.y,  typeTangent);
+	v.tangent.z  = typeFloatCompress(v.tangent.z,  typeTangent);
+	v.binormal.x = typeFloatCompress(v.binormal.x, typeBinormal);
+	v.binormal.y = typeFloatCompress(v.binormal.y, typeBinormal);
+	v.binormal.z = typeFloatCompress(v.binormal.z, typeBinormal);
 	return v;
 }
 
@@ -294,20 +294,20 @@ std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 	
 	for (Uint32 i = 0; i < countVertices; i++) {
 		Vertex vertex;
-		vertex.px = readFloat(in, typePosition);
-		vertex.py = readFloat(in, typePosition);
-		vertex.pz = readFloat(in, typePosition);
-		vertex.u  = readFloat(in, typeTexcoord);
-		vertex.v  = readFloat(in, typeTexcoord);
-		vertex.nx = readFloat(in, typeNormal);
-		vertex.ny = readFloat(in, typeNormal);
-		vertex.nz = readFloat(in, typeNormal);
-		vertex.tx = readFloat(in, typeTangent);
-		vertex.ty = readFloat(in, typeTangent);
-		vertex.tz = readFloat(in, typeTangent);
-		vertex.bx = readFloat(in, typeBinormal);
-		vertex.by = readFloat(in, typeBinormal);
-		vertex.bz = readFloat(in, typeBinormal);
+		vertex.position.x = readFloat(in, typePosition);
+		vertex.position.y = readFloat(in, typePosition);
+		vertex.position.z = readFloat(in, typePosition);
+		vertex.texcoord.x = readFloat(in, typeTexcoord);
+		vertex.texcoord.y = readFloat(in, typeTexcoord);
+		vertex.normal.x   = readFloat(in, typeNormal);
+		vertex.normal.y   = readFloat(in, typeNormal);
+		vertex.normal.z   = readFloat(in, typeNormal);
+		vertex.tangent.x  = readFloat(in, typeTangent);
+		vertex.tangent.y  = readFloat(in, typeTangent);
+		vertex.tangent.z  = readFloat(in, typeTangent);
+		vertex.binormal.x = readFloat(in, typeBinormal);
+		vertex.binormal.y = readFloat(in, typeBinormal);
+		vertex.binormal.z = readFloat(in, typeBinormal);
 		obj.pushVertex(vertex);
 	}
 	
@@ -385,20 +385,20 @@ std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
 	size_type vertexCount = obj.getVertexCount();
 	for (size_type i = 0; i < vertexCount; i++) {
 		const Vertex& vertex = obj.getVertex(i);
-		writeFloat(out, vertex.px, obj.typePosition);
-		writeFloat(out, vertex.py, obj.typePosition);
-		writeFloat(out, vertex.pz, obj.typePosition);
-		writeFloat(out, vertex.u,  obj.typeTexcoord);
-		writeFloat(out, vertex.v,  obj.typeTexcoord);
-		writeFloat(out, vertex.nx, obj.typeNormal);
-		writeFloat(out, vertex.ny, obj.typeNormal);
-		writeFloat(out, vertex.nz, obj.typeNormal);
-		writeFloat(out, vertex.tx, obj.typeTangent);
-		writeFloat(out, vertex.ty, obj.typeTangent);
-		writeFloat(out, vertex.tz, obj.typeTangent);
-		writeFloat(out, vertex.bx, obj.typeBinormal);
-		writeFloat(out, vertex.by, obj.typeBinormal);
-		writeFloat(out, vertex.bz, obj.typeBinormal);
+		writeFloat(out, vertex.position.x, obj.typePosition);
+		writeFloat(out, vertex.position.y, obj.typePosition);
+		writeFloat(out, vertex.position.z, obj.typePosition);
+		writeFloat(out, vertex.texcoord.x, obj.typeTexcoord);
+		writeFloat(out, vertex.texcoord.y, obj.typeTexcoord);
+		writeFloat(out, vertex.normal.x,   obj.typeNormal);
+		writeFloat(out, vertex.normal.y,   obj.typeNormal);
+		writeFloat(out, vertex.normal.z,   obj.typeNormal);
+		writeFloat(out, vertex.tangent.x,  obj.typeTangent);
+		writeFloat(out, vertex.tangent.y,  obj.typeTangent);
+		writeFloat(out, vertex.tangent.z,  obj.typeTangent);
+		writeFloat(out, vertex.binormal.x, obj.typeBinormal);
+		writeFloat(out, vertex.binormal.y, obj.typeBinormal);
+		writeFloat(out, vertex.binormal.z, obj.typeBinormal);
 	}
 	
 	size_type elementCount = obj.getElementCount();

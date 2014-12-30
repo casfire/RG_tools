@@ -7,6 +7,8 @@ using CFR::Uint32;
 using CFR::Pixel8;
 using CFR::Pixel16;
 using CFR::Pixel32;
+using CFR::Vec2;
+using CFR::Vec3;
 using CFR::Vertex;
 
 
@@ -137,17 +139,12 @@ Pixel16 Pixel32::pixel16() const
 
 /* CFR::Vertex */
 
-Vertex::Vertex(
-	float px, float py, float pz,
-	float nx, float ny, float nz,
-	float u,  float v,
-	float tx, float ty, float tz,
-	float bx, float by, float bz)
-: px(px), py(py), pz(pz),
-  nx(nx), ny(ny), nz(nz),
-  u(u),   v(v),
-  tx(tx), ty(ty), tz(tz),
-  bx(bx), by(by), bz(bz)
+Vec2::Vec2(float x, float y)
+: x(x), y(y)
+{}
+
+Vec3::Vec3(float x, float y, float z)
+: x(x), y(y), z(z)
 {}
 
 bool Vertex::operator <(const CFR::Vertex &obj) const
@@ -165,30 +162,40 @@ bool Vertex::operator==(const CFR::Vertex &b) const
 {
 	const Vertex& a = *this;
 	return
-		   a.px == b.px && a.py == b.py && a.pz == b.pz
-		&& a.nx == b.nx && a.ny == b.ny && a.nz == b.nz
-		&& a.u  == b.u  && a.v  == b.v
-		&& a.tx == b.tx && a.ty == b.ty && a.tz == b.tz
-		&& a.bx == b.bx && a.by == b.by && a.bz == b.bz;
+		   a.position.x == b.position.x
+		&& a.position.y == b.position.y
+		&& a.position.z == b.position.z
+		&& a.texcoord.x == b.texcoord.x
+		&& a.texcoord.y == b.texcoord.y
+		&& a.normal.x   == b.normal.x
+		&& a.normal.y   == b.normal.y
+		&& a.normal.z   == b.normal.z
+		&& a.tangent.x  == b.tangent.x
+		&& a.tangent.y  == b.tangent.y
+		&& a.tangent.z  == b.tangent.z
+		&& a.binormal.x == b.binormal.x
+		&& a.binormal.y == b.binormal.y
+		&& a.binormal.z == b.binormal.z;
 }
 
 std::hash<Vertex>::result_type std::hash<Vertex>::operator()(Vertex const& v) const
 {
+	std::hash<float> hash;
 	return 
-		  (std::hash<float>()(v.px) * 0x8AF785E7)
-		^ (std::hash<float>()(v.py) * 0x200CD333)
-		^ (std::hash<float>()(v.pz) * 0x0AE9ED1B)
-		^ (std::hash<float>()(v.nx) * 0xE4492C33)
-		^ (std::hash<float>()(v.ny) * 0xF201058D)
-		^ (std::hash<float>()(v.nz) * 0xFD0B4D09)
-		^ (std::hash<float>()(v.u ) * 0x20ADB3A9)
-		^ (std::hash<float>()(v.v ) * 0x6E63CBD1)
-		^ (std::hash<float>()(v.tx) * 0xEF7A6E89)
-		^ (std::hash<float>()(v.ty) * 0xAE028975)
-		^ (std::hash<float>()(v.tz) * 0x07EECD6F)
-		^ (std::hash<float>()(v.bx) * 0xF380DC15)
-		^ (std::hash<float>()(v.bx) * 0xE17BBD23)
-		^ (std::hash<float>()(v.bz) * 0xBC154D09);
+		  (hash(v.position.x) * 0x8AF785E7)
+		^ (hash(v.position.y) * 0x200CD333)
+		^ (hash(v.position.z) * 0x0AE9ED1B)
+		^ (hash(v.texcoord.x) * 0x20ADB3A9)
+		^ (hash(v.texcoord.y) * 0x6E63CBD1)
+		^ (hash(v.normal.x)   * 0xE4492C33)
+		^ (hash(v.normal.y)   * 0xF201058D)
+		^ (hash(v.normal.z)   * 0xFD0B4D09)
+		^ (hash(v.tangent.x)  * 0xEF7A6E89)
+		^ (hash(v.tangent.y)  * 0xAE028975)
+		^ (hash(v.tangent.z)  * 0x07EECD6F)
+		^ (hash(v.binormal.x) * 0xF380DC15)
+		^ (hash(v.binormal.x) * 0xE17BBD23)
+		^ (hash(v.binormal.z) * 0xBC154D09);
 }
 
 

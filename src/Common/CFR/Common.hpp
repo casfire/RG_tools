@@ -20,6 +20,8 @@ namespace CFR {
 	struct Pixel8;
 	struct Pixel16;
 	struct Pixel32;
+	struct Vec2;
+	struct Vec3;
 	struct Vertex;
 	class  Exception;
 	class  BaseTexture;
@@ -59,20 +61,23 @@ namespace CFR {
 		Pixel16 pixel16() const;
 	};
 	
+	struct Vec2 {
+		float x, y;
+		Vec2(float x = 0.f, float y = 0.f);
+	};
+	
+	struct Vec3 {
+		float x, y, z;
+		Vec3(float x = 0.f, float y = 0.f, float z = 0.f);
+	};
+	
 	/* Geometry vertex */
 	struct Vertex {
-		float px, py, pz; // Position
-		float nx, ny, nz; // Normal
-		float u, v;       // Texture coordinates
-		float tx, ty, tz; // Tangent
-		float bx, by, bz; // Binormal
-		Vertex(
-			float px = 0.f, float py = 0.f, float pz = 0.f,
-			float nx = 0.f, float ny = 0.f, float nz = 0.f,
-			float u  = 0.f, float v  = 0.f,
-			float tx = 0.f, float ty = 0.f, float tz = 0.f,
-			float bx = 0.f, float by = 0.f, float bz = 0.f
-		);
+		Vec3 position;
+		Vec2 texcoord;
+		Vec3 normal;
+		Vec3 tangent;
+		Vec3 binormal;
 		bool operator <(const CFR::Vertex&) const;
 		bool operator==(const CFR::Vertex&) const;
 	};
