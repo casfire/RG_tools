@@ -39,7 +39,7 @@ void OBJ::TokenParser::read(const std::string& filename, std::ostream& log)
 {
 	prefix = getTokenPrefix(filename);
 	std::ifstream file;
-	log << "[" << prefix << "] Opening " << filename << " for reading.\n";
+	log << "[" << prefix << "] Opening for reading.\n";
 	file.open(filename, std::ios::in);
 	if (file.is_open()) {
 		read(file, log);
