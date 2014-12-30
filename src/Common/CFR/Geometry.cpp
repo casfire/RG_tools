@@ -19,7 +19,7 @@ using CFR::TYPE_DISABLE;
 
 
 
-/* CFR::Geometry */
+/* Float packing */
 
 inline bool typeIsValid(Uint8 type) {
 	switch (type) {
@@ -43,19 +43,48 @@ inline Uint32 typeGetSize(Uint8 type) {
 	}
 }
 
-inline float typeFloatCompress(float v, Uint8 type) {
+inline Uint32 packFloatFull  (float v) { return *reinterpret_cast<Uint32*>(&v); }
+inline Uint16 packFloatHalf  (float v) { return glm::packHalf1x16 (v); }
+inline Uint16 packFloatSShort(float v) { return glm::packSnorm1x16(v); }
+inline Uint16 packFloatUShort(float v) { return glm::packUnorm1x16(v); }
+inline Uint8  packFloatSByte (float v) { return glm::packSnorm1x8 (v); }
+inline Uint8  packFloatUByte (float v) { return glm::packUnorm1x8 (v); }
+
+inline float unpackFloatFull  (Uint32 v) { return *reinterpret_cast<float*>(&v); }
+inline float unpackFloatHalf  (Uint16 v) { return glm::unpackHalf1x16 (v); }
+inline float unpackFloatSShort(Uint16 v) { return glm::unpackSnorm1x16(v); }
+inline float unpackFloatUShort(Uint16 v) { return glm::unpackUnorm1x16(v); }
+inline float unpackFloatSByte (Uint8 v)  { return glm::unpackSnorm1x8 (v); }
+inline float unpackFloatUByte (Uint8 v)  { return glm::unpackUnorm1x8 (v); }
+
+inline Uint32 packFloat(float v, Uint8 type) {
 	switch (type) {
-	case TYPE_FLOAT:          return v;
-	case TYPE_HALF_FLOAT:     return glm::unpackHalf1x16 (glm::packHalf1x16 (v));
-	case TYPE_BYTE:           return glm::unpackSnorm1x8 (glm::packSnorm1x8 (v));
-	case TYPE_UNSIGNED_BYTE:  return glm::unpackUnorm1x8 (glm::packUnorm1x8 (v));
-	case TYPE_SHORT:          return glm::unpackSnorm1x16(glm::packSnorm1x16(v));
-	case TYPE_UNSIGNED_SHORT: return glm::unpackUnorm1x16(glm::packUnorm1x16(v));
+	case TYPE_FLOAT:          return packFloatFull  (v);
+	case TYPE_HALF_FLOAT:     return packFloatHalf  (v);
+	case TYPE_SHORT:          return packFloatSShort(v);
+	case TYPE_UNSIGNED_SHORT: return packFloatUShort(v);
+	case TYPE_BYTE:           return packFloatSByte (v);
+	case TYPE_UNSIGNED_BYTE:  return packFloatUByte (v);
 	case TYPE_DISABLE:
-	default:
-		return 0.f;
+	default: return 0;
 	}
 }
+
+inline float unpackFloat(Uint32 v, Uint8 type) {
+	switch (type) {
+	case TYPE_FLOAT:          return unpackFloatFull  (v);
+	case TYPE_HALF_FLOAT:     return unpackFloatHalf  (v);
+	case TYPE_SHORT:          return unpackFloatSShort(v);
+	case TYPE_UNSIGNED_SHORT: return unpackFloatUShort(v);
+	case TYPE_BYTE:           return unpackFloatSByte (v);
+	case TYPE_UNSIGNED_BYTE:  return unpackFloatUByte (v);
+	default: return 0.f;
+	}
+}
+
+
+
+/* CFR::Geometry */
 
 Geometry::Geometry()
 : BaseGeometry()
@@ -93,20 +122,20 @@ void Geometry::saveToFile(const std::string &file) const
 
 Vertex Geometry::compressVertex(Vertex v)
 {
-	v.position.x = typeFloatCompress(v.position.x, typePosition);
-	v.position.y = typeFloatCompress(v.position.y, typePosition);
-	v.position.z = typeFloatCompress(v.position.z, typePosition);
-	v.texcoord.x = typeFloatCompress(v.texcoord.x, typeTexcoord);
-	v.texcoord.y = typeFloatCompress(v.texcoord.y, typeTexcoord);
-	v.normal.x   = typeFloatCompress(v.normal.x,   typeNormal);
-	v.normal.y   = typeFloatCompress(v.normal.y,   typeNormal);
-	v.normal.z   = typeFloatCompress(v.normal.z,   typeNormal);
-	v.tangent.x  = typeFloatCompress(v.tangent.x,  typeTangent);
-	v.tangent.y  = typeFloatCompress(v.tangent.y,  typeTangent);
-	v.tangent.z  = typeFloatCompress(v.tangent.z,  typeTangent);
-	v.binormal.x = typeFloatCompress(v.binormal.x, typeBinormal);
-	v.binormal.y = typeFloatCompress(v.binormal.y, typeBinormal);
-	v.binormal.z = typeFloatCompress(v.binormal.z, typeBinormal);
+	v.position.packX = packFloat(v.position.x, typePosition);
+	v.position.packY = packFloat(v.position.y, typePosition);
+	v.position.packZ = packFloat(v.position.z, typePosition);
+	v.texcoord.packX = packFloat(v.texcoord.x, typeTexcoord);
+	v.texcoord.packY = packFloat(v.texcoord.y, typeTexcoord);
+	v.normal.packX   = packFloat(v.normal.x,   typeNormal);
+	v.normal.packY   = packFloat(v.normal.y,   typeNormal);
+	v.normal.packZ   = packFloat(v.normal.z,   typeNormal);
+	v.tangent.packX  = packFloat(v.tangent.x,  typeTangent);
+	v.tangent.packY  = packFloat(v.tangent.y,  typeTangent);
+	v.tangent.packZ  = packFloat(v.tangent.z,  typeTangent);
+	v.binormal.packX = packFloat(v.binormal.x, typeBinormal);
+	v.binormal.packY = packFloat(v.binormal.y, typeBinormal);
+	v.binormal.packZ = packFloat(v.binormal.z, typeBinormal);
 	return v;
 }
 
@@ -210,17 +239,10 @@ inline uint32_t read32(std::istream &in) {
 }
 
 inline float readFloat(std::istream &in, Uint8 type) {
-	switch (type) {
-	case TYPE_FLOAT:
-	{
-		uint32_t t = read32(in);
-		return *reinterpret_cast<float*>(&t);
-	}
-	case TYPE_HALF_FLOAT:     return glm::unpackHalf1x16 (read16(in));
-	case TYPE_BYTE:           return glm::unpackSnorm1x8 (read8 (in));
-	case TYPE_UNSIGNED_BYTE:  return glm::unpackUnorm1x8 (read8 (in));
-	case TYPE_SHORT:          return glm::unpackSnorm1x16(read16(in));
-	case TYPE_UNSIGNED_SHORT: return glm::packUnorm1x16  (read16(in));
+	switch (typeGetSize(type)) {
+	case 1: return unpackFloat(read8 (in), type);
+	case 2: return unpackFloat(read16(in), type);
+	case 4: return unpackFloat(read32(in), type);
 	default: return 0.f;
 	}
 }
@@ -242,15 +264,10 @@ inline void write32(std::ostream &out, uint32_t v) {
 }
 
 inline void writeFloat(std::ostream &out, float v, Uint8 type) {
-	switch (type) {
-	case TYPE_FLOAT:
-		write32(out, *reinterpret_cast<uint32_t*>(&v));
-		break;
-	case TYPE_HALF_FLOAT:     write16(out, glm::packHalf1x16(v));  break;
-	case TYPE_BYTE:           write8 (out, glm::packSnorm1x8(v));  break;
-	case TYPE_UNSIGNED_BYTE:  write8 (out, glm::packUnorm1x8(v));  break;
-	case TYPE_SHORT:          write16(out, glm::packSnorm1x16(v)); break;
-	case TYPE_UNSIGNED_SHORT: write16(out, glm::packUnorm1x16(v)); break;
+	switch (typeGetSize(type)) {
+	case 1: write8 (out, packFloat(v, type));
+	case 2: write16(out, packFloat(v, type));
+	case 4: write32(out, packFloat(v, type));
 	}
 }
 

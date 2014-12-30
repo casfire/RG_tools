@@ -63,11 +63,13 @@ namespace CFR {
 	
 	struct Vec2 {
 		float x, y;
+		Uint32 packX, packY;
 		Vec2(float x = 0.f, float y = 0.f);
 	};
 	
 	struct Vec3 {
 		float x, y, z;
+		Uint32 packX, packY, packZ;
 		Vec3(float x = 0.f, float y = 0.f, float z = 0.f);
 	};
 	

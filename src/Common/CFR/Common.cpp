@@ -140,11 +140,16 @@ Pixel16 Pixel32::pixel16() const
 /* CFR::Vertex */
 
 Vec2::Vec2(float x, float y)
-: x(x), y(y)
+: x(x), y(y),
+  packX(*reinterpret_cast<Uint32*>(&x)),
+  packY(*reinterpret_cast<Uint32*>(&y))
 {}
 
 Vec3::Vec3(float x, float y, float z)
-: x(x), y(y), z(z)
+: x(x), y(y), z(z),
+  packX(*reinterpret_cast<Uint32*>(&x)),
+  packY(*reinterpret_cast<Uint32*>(&y)),
+  packZ(*reinterpret_cast<Uint32*>(&z)) 
 {}
 
 bool Vertex::operator <(const CFR::Vertex &obj) const
@@ -162,40 +167,40 @@ bool Vertex::operator==(const CFR::Vertex &b) const
 {
 	const Vertex& a = *this;
 	return
-		   a.position.x == b.position.x
-		&& a.position.y == b.position.y
-		&& a.position.z == b.position.z
-		&& a.texcoord.x == b.texcoord.x
-		&& a.texcoord.y == b.texcoord.y
-		&& a.normal.x   == b.normal.x
-		&& a.normal.y   == b.normal.y
-		&& a.normal.z   == b.normal.z
-		&& a.tangent.x  == b.tangent.x
-		&& a.tangent.y  == b.tangent.y
-		&& a.tangent.z  == b.tangent.z
-		&& a.binormal.x == b.binormal.x
-		&& a.binormal.y == b.binormal.y
-		&& a.binormal.z == b.binormal.z;
+		   a.position.packX == b.position.packX
+		&& a.position.packY == b.position.packY
+		&& a.position.packZ == b.position.packZ
+		&& a.texcoord.packX == b.texcoord.packX
+		&& a.texcoord.packY == b.texcoord.packY
+		&& a.normal.packX   == b.normal.packX
+		&& a.normal.packY   == b.normal.packY
+		&& a.normal.packZ   == b.normal.packZ
+		&& a.tangent.packX  == b.tangent.packX
+		&& a.tangent.packY  == b.tangent.packY
+		&& a.tangent.packZ  == b.tangent.packZ
+		&& a.binormal.packX == b.binormal.packX
+		&& a.binormal.packY == b.binormal.packY
+		&& a.binormal.packZ == b.binormal.packZ;
 }
 
 std::hash<Vertex>::result_type std::hash<Vertex>::operator()(Vertex const& v) const
 {
-	std::hash<float> hash;
-	return 
-		  (hash(v.position.x) * 0x8AF785E7)
-		^ (hash(v.position.y) * 0x200CD333)
-		^ (hash(v.position.z) * 0x0AE9ED1B)
-		^ (hash(v.texcoord.x) * 0x20ADB3A9)
-		^ (hash(v.texcoord.y) * 0x6E63CBD1)
-		^ (hash(v.normal.x)   * 0xE4492C33)
-		^ (hash(v.normal.y)   * 0xF201058D)
-		^ (hash(v.normal.z)   * 0xFD0B4D09)
-		^ (hash(v.tangent.x)  * 0xEF7A6E89)
-		^ (hash(v.tangent.y)  * 0xAE028975)
-		^ (hash(v.tangent.z)  * 0x07EECD6F)
-		^ (hash(v.binormal.x) * 0xF380DC15)
-		^ (hash(v.binormal.x) * 0xE17BBD23)
-		^ (hash(v.binormal.z) * 0xBC154D09);
+	std::hash<Uint32> hash;
+	return
+		  (hash(v.position.packX) * 0x8AF785E7)
+		^ (hash(v.position.packY) * 0x200CD333)
+		^ (hash(v.position.packZ) * 0x0AE9ED1B)
+		^ (hash(v.texcoord.packX) * 0x20ADB3A9)
+		^ (hash(v.texcoord.packY) * 0x6E63CBD1)
+		^ (hash(v.normal.packX)   * 0xE4492C33)
+		^ (hash(v.normal.packY)   * 0xF201058D)
+		^ (hash(v.normal.packZ)   * 0xFD0B4D09)
+		^ (hash(v.tangent.packX)  * 0xEF7A6E89)
+		^ (hash(v.tangent.packY)  * 0xAE028975)
+		^ (hash(v.tangent.packZ)  * 0x07EECD6F)
+		^ (hash(v.binormal.packX) * 0xF380DC15)
+		^ (hash(v.binormal.packY) * 0xE17BBD23)
+		^ (hash(v.binormal.packZ) * 0xBC154D09);
 }
 
 
