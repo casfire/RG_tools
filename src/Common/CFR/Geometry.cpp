@@ -9,13 +9,22 @@ using CFR::Uint8;
 using CFR::Uint16;
 using CFR::Uint32;
 using CFR::Vertex;
-using CFR::TYPE_BYTE;
-using CFR::TYPE_UNSIGNED_BYTE;
-using CFR::TYPE_SHORT;
-using CFR::TYPE_UNSIGNED_SHORT;
+using CFR::TYPE_DISABLE;
 using CFR::TYPE_FLOAT;
 using CFR::TYPE_HALF_FLOAT;
-using CFR::TYPE_DISABLE;
+using CFR::TYPE_SHORT;
+using CFR::TYPE_UNSIGNED_SHORT;
+using CFR::TYPE_BYTE;
+using CFR::TYPE_UNSIGNED_BYTE;
+using CFR::TYPE_NORM_SHORT;
+using CFR::TYPE_NORM_UNSIGNED_SHORT;
+using CFR::TYPE_NORM_BYTE;
+using CFR::TYPE_NORM_UNSIGNED_BYTE;
+typedef std::int8_t  Sint8;
+typedef std::int16_t Sint16;
+typedef std::int32_t Sint32;
+using glm::round;
+using glm::clamp;
 
 
 
@@ -23,10 +32,13 @@ using CFR::TYPE_DISABLE;
 
 inline bool typeIsValid(Uint8 type) {
 	switch (type) {
-	case TYPE_BYTE:  case TYPE_UNSIGNED_BYTE:
-	case TYPE_SHORT: case TYPE_UNSIGNED_SHORT:
-	case TYPE_FLOAT: case TYPE_HALF_FLOAT:
 	case TYPE_DISABLE:
+	case TYPE_FLOAT:
+	case TYPE_HALF_FLOAT:
+	case TYPE_SHORT:
+	case TYPE_UNSIGNED_SHORT:
+	case TYPE_BYTE:
+	case TYPE_UNSIGNED_BYTE:
 		return true;
 	default:
 		return false;
@@ -35,50 +47,60 @@ inline bool typeIsValid(Uint8 type) {
 
 inline Uint32 typeGetSize(Uint8 type) {
 	switch (type) {
-	default:         case TYPE_DISABLE:        return 0;
-	case TYPE_BYTE:  case TYPE_UNSIGNED_BYTE:  return 1;
+	default:
+	case TYPE_DISABLE:
+		return 0;
+	case TYPE_BYTE:
+	case TYPE_UNSIGNED_BYTE:
+		return 1;
 	case TYPE_HALF_FLOAT:
-	case TYPE_SHORT: case TYPE_UNSIGNED_SHORT: return 2;
-	case TYPE_FLOAT:                           return 4;
+	case TYPE_SHORT:
+	case TYPE_UNSIGNED_SHORT:
+		return 2;
+	case TYPE_FLOAT:
+		return 4;
 	}
 }
 
-inline Uint32 packFloatFull  (float v) { return *reinterpret_cast<Uint32*>(&v); }
-inline Uint16 packFloatHalf  (float v) { return glm::packHalf1x16 (v); }
-inline Uint16 packFloatSShort(float v) { return glm::packSnorm1x16(v); }
-inline Uint16 packFloatUShort(float v) { return glm::packUnorm1x16(v); }
-inline Uint8  packFloatSByte (float v) { return glm::packSnorm1x8 (v); }
-inline Uint8  packFloatUByte (float v) { return glm::packUnorm1x8 (v); }
+inline Uint32 packFull(float v) { return *reinterpret_cast<Uint32*>(&v); }
+inline Uint16 packHalf(float v) { return glm::packHalf1x16 (v); }
 
-inline float unpackFloatFull  (Uint32 v) { return *reinterpret_cast<float*>(&v); }
-inline float unpackFloatHalf  (Uint16 v) { return glm::unpackHalf1x16 (v); }
-inline float unpackFloatSShort(Uint16 v) { return glm::unpackSnorm1x16(v); }
-inline float unpackFloatUShort(Uint16 v) { return glm::unpackUnorm1x16(v); }
-inline float unpackFloatSByte (Uint8 v)  { return glm::unpackSnorm1x8 (v); }
-inline float unpackFloatUByte (Uint8 v)  { return glm::unpackUnorm1x8 (v); }
+inline float unpackFull(Uint32 v) { return *reinterpret_cast<float*>(&v); }
+inline float unpackHalf(Uint16 v) { return glm::unpackHalf1x16 (v); }
+
+inline Uint16 packNormSShort(float v) { return glm::packSnorm1x16(v); }
+inline Uint16 packNormUShort(float v) { return glm::packUnorm1x16(v); }
+inline Uint8  packNormSByte (float v) { return glm::packSnorm1x8 (v); }
+inline Uint8  packNormUByte (float v) { return glm::packUnorm1x8 (v); }
+
+inline float unpackNormSShort(Uint16 v) { return glm::unpackSnorm1x16(v); }
+inline float unpackNormUShort(Uint16 v) { return glm::unpackUnorm1x16(v); }
+inline float unpackNormSByte (Uint8 v)  { return glm::unpackSnorm1x8 (v); }
+inline float unpackNormUByte (Uint8 v)  { return glm::unpackUnorm1x8 (v); }
+
+inline Uint16 packSShort(float v) { return static_cast<Sint16>(round(clamp(v, -32767.f, 32767.f))); }
+inline Uint16 packUShort(float v) { return static_cast<Uint16>(round(clamp(v, +0.f,     65535.f))); }
+inline Uint8  packSByte (float v) { return static_cast<Sint8 >(round(clamp(v, -127.f,   127.f  ))); }
+inline Uint8  packUByte (float v) { return static_cast<Uint8 >(round(clamp(v, +0.f,     255.f  ))); }
+
+inline float unpackSShort(Sint16 v) { return clamp(static_cast<float>(v), -32767.f, 32767.f); }
+inline float unpackUShort(Uint16 v) { return clamp(static_cast<float>(v), +0.f,     65535.f); }
+inline float unpackSByte (Sint8  v) { return clamp(static_cast<float>(v), -127.f,   127.f  ); }
+inline float unpackUByte (Uint8  v) { return clamp(static_cast<float>(v), +0.f,     255.f  ); }
 
 inline Uint32 packFloat(float v, Uint8 type) {
 	switch (type) {
-	case TYPE_FLOAT:          return packFloatFull  (v);
-	case TYPE_HALF_FLOAT:     return packFloatHalf  (v);
-	case TYPE_SHORT:          return packFloatSShort(v);
-	case TYPE_UNSIGNED_SHORT: return packFloatUShort(v);
-	case TYPE_BYTE:           return packFloatSByte (v);
-	case TYPE_UNSIGNED_BYTE:  return packFloatUByte (v);
-	case TYPE_DISABLE:
-	default: return 0;
-	}
-}
-
-inline float unpackFloat(Uint32 v, Uint8 type) {
-	switch (type) {
-	case TYPE_FLOAT:          return unpackFloatFull  (v);
-	case TYPE_HALF_FLOAT:     return unpackFloatHalf  (v);
-	case TYPE_SHORT:          return unpackFloatSShort(v);
-	case TYPE_UNSIGNED_SHORT: return unpackFloatUShort(v);
-	case TYPE_BYTE:           return unpackFloatSByte (v);
-	case TYPE_UNSIGNED_BYTE:  return unpackFloatUByte (v);
-	default: return 0.f;
+	case TYPE_DISABLE: default:    return 0;
+	case TYPE_FLOAT:               return packFull  (v);
+	case TYPE_HALF_FLOAT:          return packHalf  (v);
+	case TYPE_SHORT:               return packSShort(v);
+	case TYPE_UNSIGNED_SHORT:      return packUShort(v);
+	case TYPE_BYTE:                return packSByte (v);
+	case TYPE_UNSIGNED_BYTE:       return packUByte (v);
+	case TYPE_NORM_SHORT:          return packNormSShort(v);
+	case TYPE_NORM_UNSIGNED_SHORT: return packNormUShort(v);
+	case TYPE_NORM_BYTE:           return packNormSByte (v);
+	case TYPE_NORM_UNSIGNED_BYTE:  return packNormUByte (v);
 	}
 }
 
@@ -239,10 +261,17 @@ inline uint32_t read32(std::istream &in) {
 }
 
 inline float readFloat(std::istream &in, Uint8 type) {
-	switch (typeGetSize(type)) {
-	case 1: return unpackFloat(read8 (in), type);
-	case 2: return unpackFloat(read16(in), type);
-	case 4: return unpackFloat(read32(in), type);
+	switch (type) {
+	case TYPE_FLOAT:               return unpackFull      (read32(in));
+	case TYPE_HALF_FLOAT:          return unpackHalf      (read16(in));
+	case TYPE_SHORT:               return unpackSShort    (read16(in));
+	case TYPE_UNSIGNED_SHORT:      return unpackUShort    (read16(in));
+	case TYPE_BYTE:                return unpackSByte     (read8 (in));
+	case TYPE_UNSIGNED_BYTE:       return unpackUByte     (read8 (in));
+	case TYPE_NORM_SHORT:          return unpackNormSShort(read16(in));
+	case TYPE_NORM_UNSIGNED_SHORT: return unpackNormUShort(read16(in));
+	case TYPE_NORM_BYTE:           return unpackNormSByte (read8 (in));
+	case TYPE_NORM_UNSIGNED_BYTE:  return unpackNormUByte (read8 (in));
 	default: return 0.f;
 	}
 }
@@ -264,10 +293,17 @@ inline void write32(std::ostream &out, uint32_t v) {
 }
 
 inline void writeFloat(std::ostream &out, float v, Uint8 type) {
-	switch (typeGetSize(type)) {
-	case 1: write8 (out, packFloat(v, type));
-	case 2: write16(out, packFloat(v, type));
-	case 4: write32(out, packFloat(v, type));
+	switch (type) {
+	case TYPE_FLOAT:               write32(out, packFull      (v)); break;
+	case TYPE_HALF_FLOAT:          write16(out, packHalf      (v)); break;
+	case TYPE_SHORT:               write16(out, packSShort    (v)); break;
+	case TYPE_UNSIGNED_SHORT:      write16(out, packUShort    (v)); break;
+	case TYPE_BYTE:                write8 (out, packSByte     (v)); break;
+	case TYPE_UNSIGNED_BYTE:       write8 (out, packUByte     (v)); break;
+	case TYPE_NORM_SHORT:          write16(out, packNormSShort(v)); break;
+	case TYPE_NORM_UNSIGNED_SHORT: write16(out, packNormUShort(v)); break;
+	case TYPE_NORM_BYTE:           write8 (out, packNormSByte (v)); break;
+	case TYPE_NORM_UNSIGNED_BYTE:  write8 (out, packNormUByte (v)); break;
 	}
 }
 

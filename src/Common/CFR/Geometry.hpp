@@ -16,13 +16,17 @@ namespace CFR {
 	
 	
 	/* Attribute export types */
-	static const Uint8 TYPE_BYTE           = 0b10000000;
-	static const Uint8 TYPE_UNSIGNED_BYTE  = 0b10000001;
-	static const Uint8 TYPE_SHORT          = 0b10000010;
-	static const Uint8 TYPE_UNSIGNED_SHORT = 0b10000011;
-	static const Uint8 TYPE_FLOAT          = 0b00000110;
-	static const Uint8 TYPE_HALF_FLOAT     = 0b00001011;
-	static const Uint8 TYPE_DISABLE        = 0b11111111;
+	static const Uint8 TYPE_DISABLE             = 0b11111111;
+	static const Uint8 TYPE_FLOAT               = 0b00000110;
+	static const Uint8 TYPE_HALF_FLOAT          = 0b00001011;
+	static const Uint8 TYPE_SHORT               = 0b00000010;
+	static const Uint8 TYPE_UNSIGNED_SHORT      = 0b00000011;
+	static const Uint8 TYPE_BYTE                = 0b00000000;
+	static const Uint8 TYPE_UNSIGNED_BYTE       = 0b00000001;
+	static const Uint8 TYPE_NORM_SHORT          = 0b10000010;
+	static const Uint8 TYPE_NORM_UNSIGNED_SHORT = 0b10000011;
+	static const Uint8 TYPE_NORM_BYTE           = 0b10000000;
+	static const Uint8 TYPE_NORM_UNSIGNED_BYTE  = 0b10000001;
 	
 	
 	
