@@ -97,21 +97,6 @@ namespace OBJ {
 	
 	
 	
-	/* Thrown by MaterialSaver::find() */
-	class MaterialNotFoundException : public std::exception {
-	public:
-		
-		MaterialNotFoundException(const std::string &name);
-		const char* what() const throw();
-		
-	private:
-		
-		std::string name;
-		
-	};
-	
-	
-	
 } // namespace OBJ
 
 #endif // _OBJ_MATERIALREADER_HPP_

@@ -123,25 +123,10 @@ void OBJ::MaterialSaver::parse(OBJ::Material &m)
 
 const OBJ::Material& OBJ::MaterialSaver::find(const std::string &name) const
 {
-	MaterialConstIterator i = materials.find(name);
-	if (i != materials.end()) return i->second;
-	throw OBJ::MaterialNotFoundException(name);
+	return materials.at(name);
 }
 
 void OBJ::MaterialSaver::clear()
 {
 	materials.clear();
-}
-
-
-
-/* OBJ::MaterialNotFoundException */
-
-OBJ::MaterialNotFoundException::MaterialNotFoundException(const std::string &name)
-: name(name)
-{}
-
-const char* OBJ::MaterialNotFoundException::what() const throw()
-{
-	return name.c_str();
 }
