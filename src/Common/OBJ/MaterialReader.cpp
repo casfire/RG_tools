@@ -130,3 +130,8 @@ void OBJ::MaterialSaver::clear()
 {
 	materials.clear();
 }
+
+std::size_t OBJ::MaterialSaver::size() const
+{
+	return materials.size();
+}

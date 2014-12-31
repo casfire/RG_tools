@@ -12,6 +12,7 @@ struct Converter : public OBJ::ElementReader {
 	sf::Clock clock;
 	const std::size_t lines;
 	CFR::Geometry &geometry;
+	OBJ::MaterialSaver materials;
 	
 	Converter(std::size_t lines, CFR::Geometry &geometry);
 	bool parse(OBJ::Vertex::Geometry& v) override;
@@ -173,6 +174,16 @@ void Converter::report(bool force) {
 bool Converter::parse(OBJ::Vertex::Geometry &v)  { report(false); return ElementReader::parse(v); }
 bool Converter::parse(OBJ::Grouping::Groups&)    { report(true);  return true; }
 bool Converter::parse(OBJ::Grouping::Smoothing&) { report(false); return true; }
-bool Converter::parse(OBJ::Render::UseMaterial&) { report(false); return true; }
-bool Converter::parse(OBJ::Render::MaterialLib&) { report(false); return true; }
+
+bool Converter::parse(OBJ::Render::UseMaterial&) {
+	report(false);
+	return true;
+}
+
+bool Converter::parse(OBJ::Render::MaterialLib &m) {
+	for (std::size_t i = 0; i < m.files.size(); i++) materials.read(m.files[i], std::cout);
+	std::cout << materials.size() << " Materials saved.\n";
+	return true;
+}
+
 Converter::Converter(std::size_t lines, CFR::Geometry &geometry) : lines(lines), geometry(geometry) {}

@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include <exception>
+#include <cstddef> // std::size_t
 
 namespace OBJ {
 	
@@ -87,6 +88,7 @@ namespace OBJ {
 		
 		const Material& find(const std::string &name) const;
 		void clear();
+		std::size_t size() const;
 		
 	protected:
 		
