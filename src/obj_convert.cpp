@@ -16,6 +16,7 @@ struct Converter : public OBJ::ElementReader {
 	CFR::Geometry &geometry;
 	std::ostream &model;
 	CFR::size_type lastElements = 0;
+	std::string lastMaterial;
 	
 	std::size_t lines;
 	Converter(CFR::Geometry &geometry, std::ostream &model);
@@ -56,10 +57,10 @@ int main(int argc, char* args[]) {
 	/* Geometry */
 	CFR::Geometry geometry;
 	geometry.setTypePosition(CFR::TYPE_FLOAT);
-	geometry.setTypeTexcoord(CFR::TYPE_FLOAT);
-	geometry.setTypeNormal  (CFR::TYPE_FLOAT);
-	geometry.setTypeTangent (CFR::TYPE_FLOAT);
-	geometry.setTypeBinormal(CFR::TYPE_FLOAT);
+	geometry.setTypeTexcoord(CFR::TYPE_HALF_FLOAT);
+	geometry.setTypeNormal  (CFR::TYPE_HALF_FLOAT);
+	geometry.setTypeTangent (CFR::TYPE_DISABLE);
+	geometry.setTypeBinormal(CFR::TYPE_DISABLE);
 	
 	/* Model */
 	std::ofstream model(fileModel);
@@ -109,9 +110,9 @@ bool Converter::parse(OBJ::Triangle &t) {
 	
 	bool hasUV = t.a.hasTexture && t.b.hasTexture && t.c.hasTexture;
 	if (hasUV) {
-		a.texcoord = CFR::Vec2(t.a.texture.x, t.a.texture.y);
-		b.texcoord = CFR::Vec2(t.b.texture.x, t.b.texture.y);
-		c.texcoord = CFR::Vec2(t.c.texture.x, t.c.texture.y);
+		a.texcoord = CFR::Vec2(t.a.texture.x, -t.a.texture.y);
+		b.texcoord = CFR::Vec2(t.b.texture.x, -t.b.texture.y);
+		c.texcoord = CFR::Vec2(t.c.texture.x, -t.c.texture.y);
 	} else if (
 		   geometry.getTypeTexcoord() != CFR::TYPE_DISABLE
 		|| geometry.getTypeTangent()  != CFR::TYPE_DISABLE
@@ -192,7 +193,7 @@ void Converter::report(bool force) {
 }
 
 bool Converter::parse(OBJ::Vertex::Geometry &v)  { report(false); return ElementReader::parse(v); }
-bool Converter::parse(OBJ::Grouping::Groups&)    { report(true);  return true; }
+bool Converter::parse(OBJ::Grouping::Groups&)    { report(false); return true; }
 bool Converter::parse(OBJ::Grouping::Smoothing&) { report(false); return true; }
 
 void Converter::done() {
@@ -213,8 +214,10 @@ void Converter::done() {
 }
 
 bool Converter::parse(OBJ::Render::UseMaterial &m) {
+	if (m.name.compare(lastMaterial) == 0) return true;
 	done();
 	material = materials.find(m.name);
+	lastMaterial = m.name;
 	report(false);
 	return true;
 }
