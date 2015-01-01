@@ -4,23 +4,29 @@
 #include <map>
 #include <iomanip>
 #include <glm/glm.hpp>
+#include <fstream>
 
 struct Converter : public OBJ::ElementReader {
 	
 	sf::Time reportInterval = sf::milliseconds(1000);
-	
 	sf::Clock clock;
-	const std::size_t lines;
-	CFR::Geometry &geometry;
 	OBJ::MaterialSaver materials;
+	OBJ::Material material;
 	
-	Converter(std::size_t lines, CFR::Geometry &geometry);
+	CFR::Geometry &geometry;
+	std::ostream &model;
+	CFR::size_type lastElements = 0;
+	
+	std::size_t lines;
+	Converter(CFR::Geometry &geometry, std::ostream &model);
+	
 	bool parse(OBJ::Vertex::Geometry& v) override;
 	bool parse(OBJ::Grouping::Groups& g) override;
 	bool parse(OBJ::Grouping::Smoothing& g) override;
 	bool parse(OBJ::Render::UseMaterial& r) override;
 	bool parse(OBJ::Render::MaterialLib& r) override;
 	bool parse(OBJ::Triangle &t) override;
+	void done() override;
 	void report(bool force);
 	void addNormal(OBJ::TriangleVertex &a, const OBJ::TriangleVertex &b, const OBJ::TriangleVertex &c);
 	void addTangent(CFR::Vertex &v, const CFR::Vertex &b, const CFR::Vertex &c);
@@ -34,6 +40,10 @@ int main(int argc, char* args[]) {
 		Popup("Error!", "No input file.").show();
 		return 0;
 	}
+	
+	/* Output files */
+	std::string fileModel    = getPrefix(args[1], '.') + ".cfrm";
+	std::string fileGeometry = getPrefix(args[1], '.') + ".cfrg";
 	
 	/* Find number of lines */
 	std::cout << "Counting lines." << std::endl;
@@ -51,19 +61,29 @@ int main(int argc, char* args[]) {
 	geometry.setTypeTangent (CFR::TYPE_FLOAT);
 	geometry.setTypeBinormal(CFR::TYPE_FLOAT);
 	
+	/* Model */
+	std::ofstream model(fileModel);
+	model << "#CFR Model generated from " << removePath(args[1]) << "\n";
+	model << "version 1\n";
+	model << "geometry " << removePath(fileGeometry) << "\n\n";
+	
 	/* Read obj file */
-	Converter c(lines, geometry);
+	Converter c(geometry, model);
+	c.lines = lines;
 	c.read(args[1], std::cout);
 	
 	/* Save geometry */
 	try {
-		std::string out = getPrefix(args[1], '.') + ".cfrg";
-		std::cout << "Saving geometry to " << removePath(out) << std::endl;
-		geometry.saveToFile(out);
+		std::cout << "Saving geometry to " << removePath(fileGeometry) << std::endl;
+		geometry.saveToFile(fileGeometry);
 	} catch (CFR::Exception &fail) {
 		Popup("Error!", "Failed: " + to_string(fail.what())).show();
 		return 0;
 	}
+	
+	/* Close model */
+	std::cout << "Saving model to " << removePath(fileModel) << std::endl;
+	model.close();
 	
 	/* End message */
 	Popup("CFRG Converter", "Converted.").show();
@@ -175,7 +195,26 @@ bool Converter::parse(OBJ::Vertex::Geometry &v)  { report(false); return Element
 bool Converter::parse(OBJ::Grouping::Groups&)    { report(true);  return true; }
 bool Converter::parse(OBJ::Grouping::Smoothing&) { report(false); return true; }
 
-bool Converter::parse(OBJ::Render::UseMaterial&) {
+void Converter::done() {
+	CFR::size_type currentElements = geometry.getElementCount();
+	if (currentElements - lastElements == 0) return;
+	model << "range " << lastElements << " " << currentElements << "\n";
+	OBJ::Material &m = material;
+	if (m.hasAmbient)     model << "ambient       " << m.ambient.r << " " << m.ambient.g << " " << m.ambient.b << "\n";
+	if (m.hasDiffuse)     model << "diffuse       " << m.diffuse.r << " " << m.diffuse.g << " " << m.diffuse.b << "\n";
+	if (m.hasSpecular)    model << "specular      " << m.diffuse.r << " " << m.diffuse.g << " " << m.diffuse.b << "\n";
+	if (m.hasMapAmbient)  model << "occlusion_map " << m.mapAmbient.file << "\n";
+	if (m.hasMapDiffuse)  model << "diffuse_map   " << m.mapDiffuse.file << "\n";
+	if (m.hasMapSpecular) model << "specular_map  " << m.mapSpecular.file << "\n";
+	if (m.hasMapBump)     model << "bump_map      " << m.mapBump.file << "\n";
+	std::cout << "Writing object " << lastElements << " " << currentElements << "\n";
+	lastElements = currentElements;
+	model << "end\n\n";
+}
+
+bool Converter::parse(OBJ::Render::UseMaterial &m) {
+	done();
+	material = materials.find(m.name);
 	report(false);
 	return true;
 }
@@ -186,4 +225,5 @@ bool Converter::parse(OBJ::Render::MaterialLib &m) {
 	return true;
 }
 
-Converter::Converter(std::size_t lines, CFR::Geometry &geometry) : lines(lines), geometry(geometry) {}
+Converter::Converter(CFR::Geometry &geometry, std::ostream &model)
+: geometry(geometry), model(model) {}
