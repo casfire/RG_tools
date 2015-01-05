@@ -34,6 +34,9 @@ namespace CFR {
 		/* Number of bytes for raw pixels */
 		size_type getRawSize() const;
 		
+		/* Offset in bytes of a single pixel */
+		size_type getOffset(size_type x, size_type y, size_type z) const;
+		
 		/* Dimensions */
 		size_type getWidth() const;
 		size_type getHeight() const;

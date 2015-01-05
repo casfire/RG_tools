@@ -125,6 +125,11 @@ size_type CFR::BaseTexture::getRawSize() const
 	return width * height * depth * channels * bytes;
 }
 
+size_type CFR::BaseTexture::getOffset(size_type x, size_type y, size_type z) const
+{
+	return (z * (width * height) + y * width + x) * channels * bytes;
+}
+
 size_type CFR::BaseTexture::getWidth() const
 {
 	return width;
@@ -176,7 +181,7 @@ Uint32 CFR::BaseTexture::getPixel(size_type x, size_type y, size_type z) const
 
 Pixel8 CFR::BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1:  return accessGet8 (pixels.data() + offset, channels);
 	case 2:  return accessGet16(pixels.data() + offset, channels).pixel8();
@@ -187,7 +192,7 @@ Pixel8 CFR::BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
 
 Pixel16 CFR::BaseTexture::getPixel16(size_type x, size_type y, size_type z) const
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1:  return accessGet8 (pixels.data() + offset, channels).pixel16();
 	case 2:  return accessGet16(pixels.data() + offset, channels);
@@ -198,7 +203,7 @@ Pixel16 CFR::BaseTexture::getPixel16(size_type x, size_type y, size_type z) cons
 
 Pixel32 CFR::BaseTexture::getPixel32(size_type x, size_type y, size_type z) const
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1:  return accessGet8 (pixels.data() + offset, channels).pixel32();
 	case 2:  return accessGet16(pixels.data() + offset, channels).pixel32();
@@ -209,7 +214,7 @@ Pixel32 CFR::BaseTexture::getPixel32(size_type x, size_type y, size_type z) cons
 
 void CFR::BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1: accessSet8 (Pixel8 (p), pixels.data() + offset, channels); break;
 	case 2: accessSet16(Pixel16(p), pixels.data() + offset, channels); break;
@@ -219,7 +224,7 @@ void CFR::BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 
 void CFR::BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1: accessSet8 (p,           pixels.data() + offset, channels); break;
 	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels); break;
@@ -229,7 +234,7 @@ void CFR::BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z
 
 void CFR::BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels); break;
 	case 2: accessSet16(p,           pixels.data() + offset, channels); break;
@@ -239,7 +244,7 @@ void CFR::BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type
 
 void CFR::BaseTexture::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
 {
-	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
+	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
 	case 1: accessSet8 (p.pixel8(),  pixels.data() + offset, channels); break;
 	case 2: accessSet16(p.pixel16(), pixels.data() + offset, channels); break;
