@@ -4,26 +4,29 @@
 using std::uint32_t;
 using std::uint16_t;
 using std::uint8_t;
+using CFR::BaseTexture;
+using CFR::Texture;
+using CFR::Exception;
 
 
 
-/* CFR::Texture */
+/* Texture */
 
-CFR::Texture::Texture()
-: CFR::BaseTexture()
+Texture::Texture()
+: BaseTexture()
 {}
 
-CFR::Texture::Texture(const CFR::BaseTexture &copy)
-: CFR::BaseTexture(copy)
+Texture::Texture(const BaseTexture &copy)
+: BaseTexture(copy)
 {}
 
-CFR::Texture::Texture(
+Texture::Texture(
 	size_type width, size_type height, size_type depth,
 	size_type channels, size_type bytes)
-: CFR::BaseTexture(width, height, depth, channels, bytes)
+: BaseTexture(width, height, depth, channels, bytes)
 {}
 
-void CFR::Texture::loadFromFile(const std::string &file)
+void Texture::loadFromFile(const std::string &file)
 {
 	try {
 		std::ifstream stream;
@@ -32,11 +35,11 @@ void CFR::Texture::loadFromFile(const std::string &file)
 		stream >> *this;
 		stream.close();
 	} catch (std::ios::failure &fail) {
-		throw CFR::Exception("IO error: " + std::string(fail.what()));
+		throw Exception("IO error: " + std::string(fail.what()));
 	}
 }
 
-void CFR::Texture::saveToFile(const std::string &file) const
+void Texture::saveToFile(const std::string &file) const
 {
 	try {
 		std::ofstream stream;
@@ -45,7 +48,7 @@ void CFR::Texture::saveToFile(const std::string &file) const
 		stream << *this;
 		stream.close();
 	} catch (std::ios::failure &fail) {
-		throw CFR::Exception("IO error: " + std::string(fail.what()));
+		throw Exception("IO error: " + std::string(fail.what()));
 	}
 }
 
@@ -89,12 +92,12 @@ inline void write32(std::ostream &out, uint32_t v) {
 	write8(out, static_cast<uint8_t>((v >> 24) & 0xFF));
 }
 
-std::istream& operator>>(std::istream& in, CFR::Texture& obj)
+std::istream& operator>>(std::istream& in, Texture& obj)
 {
 	if (read32(in) != 0x54524643) {
-		throw CFR::Exception("Invalid magic number.");
+		throw Exception("Invalid magic number.");
 	} else if (read32(in) != 1) {
-		throw CFR::Exception("Invalid version.");
+		throw Exception("Invalid version.");
 	}
 	uint16_t width    = read16(in);
 	uint16_t height   = read16(in);
@@ -102,23 +105,23 @@ std::istream& operator>>(std::istream& in, CFR::Texture& obj)
 	uint8_t  channels = read8 (in);
 	uint8_t  bytes    = read8 (in);
 	if (channels == 0 || channels > 4) {
-		throw CFR::Exception("Invalid number of channels.");
+		throw Exception("Invalid number of channels.");
 	} else if (bytes == 0 || bytes == 3 || channels > 4) {
-		throw CFR::Exception("Invalid number of bytes per color.");
+		throw Exception("Invalid number of bytes per color.");
 	}
 	obj.resize(width, height, depth, channels, bytes);
 	in.read(reinterpret_cast<char*>(obj.getRawPixels()), obj.getRawSize());
 	return in;
 }
 
-std::ostream& operator<<(std::ostream& out, const CFR::Texture& obj)
+std::ostream& operator<<(std::ostream& out, const Texture& obj)
 {
 	if (obj.getWidth() > 0xFFFF || obj.getHeight() > 0xFFFF || obj.getDepth() > 0xFFFF) {
-		throw CFR::Exception("Dimensions are too big.");
+		throw Exception("Dimensions are too big.");
 	} else if (obj.getChannels() > 4) {
-		throw CFR::Exception("Invalid number of channels.");
+		throw Exception("Invalid number of channels.");
 	} else if (obj.getBytes() == 3 || obj.getBytes() > 4) {
-		throw CFR::Exception("Invalid number of bytes per color.");
+		throw Exception("Invalid number of bytes per color.");
 	}
 	write32(out, 0x54524643);
 	write32(out, 1);

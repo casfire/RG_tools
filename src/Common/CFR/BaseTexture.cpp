@@ -7,6 +7,7 @@ using CFR::Uint32;
 using CFR::Pixel8;
 using CFR::Pixel16;
 using CFR::Pixel32;
+using CFR::BaseTexture;
 
 
 
@@ -88,18 +89,18 @@ inline void accessSet32(Pixel32 pixel, Uint8 *pixels, size_type channels) {
 
 
 
-/* CFR::BaseTexture */
+/* BaseTexture */
 
-CFR::BaseTexture::BaseTexture()
+BaseTexture::BaseTexture()
 : width(0), height(0), depth(0), channels(3), bytes(1)
 {}
 
-CFR::BaseTexture::BaseTexture(const BaseTexture &copy)
+BaseTexture::BaseTexture(const BaseTexture &copy)
 : width(copy.width), height(copy.height), depth(copy.depth),
   channels(copy.channels), bytes(copy.bytes)
 {}
 
-CFR::BaseTexture::BaseTexture(
+BaseTexture::BaseTexture(
 	size_type width, size_type height, size_type depth,
 	size_type channels, size_type bytes)
 : width(width), height(height), depth(depth),
@@ -107,54 +108,54 @@ CFR::BaseTexture::BaseTexture(
   pixels(width * height * depth * channels * bytes)
 {}
 
-CFR::BaseTexture::~BaseTexture()
+BaseTexture::~BaseTexture()
 {}
 
-void* CFR::BaseTexture::getRawPixels()
+void* BaseTexture::getRawPixels()
 {
 	return static_cast<void*>(pixels.data());
 }
 
-const void* CFR::BaseTexture::getRawPixels() const
+const void* BaseTexture::getRawPixels() const
 {
 	return static_cast<const void*>(pixels.data());
 }
 
-size_type CFR::BaseTexture::getRawSize() const
+size_type BaseTexture::getRawSize() const
 {
 	return width * height * depth * channels * bytes;
 }
 
-size_type CFR::BaseTexture::getOffset(size_type x, size_type y, size_type z) const
+size_type BaseTexture::getOffset(size_type x, size_type y, size_type z) const
 {
 	return (z * (width * height) + y * width + x) * channels * bytes;
 }
 
-size_type CFR::BaseTexture::getWidth() const
+size_type BaseTexture::getWidth() const
 {
 	return width;
 }
-size_type CFR::BaseTexture::getHeight() const
+size_type BaseTexture::getHeight() const
 {
 	return height;
 }
 
-size_type CFR::BaseTexture::getDepth() const
+size_type BaseTexture::getDepth() const
 {
 	return depth;
 }
 
-size_type CFR::BaseTexture::getChannels() const
+size_type BaseTexture::getChannels() const
 {
 	return channels;
 }
 
-size_type CFR::BaseTexture::getBytes() const
+size_type BaseTexture::getBytes() const
 {
 	return bytes;
 }
 
-void CFR::BaseTexture::resize(
+void BaseTexture::resize(
 	size_type width, size_type height, size_type depth ,
 	size_type channels, size_type bytes)
 {
@@ -168,7 +169,7 @@ void CFR::BaseTexture::resize(
 	pixels.resize(width * height * depth * channels * bytes);
 }
 
-Uint32 CFR::BaseTexture::getPixel(size_type x, size_type y, size_type z) const
+Uint32 BaseTexture::getPixel(size_type x, size_type y, size_type z) const
 {
 	size_type offset = (z * (width * height) + y * width + x) * channels * bytes;
 	switch (bytes) {
@@ -179,7 +180,7 @@ Uint32 CFR::BaseTexture::getPixel(size_type x, size_type y, size_type z) const
 	}
 }
 
-Pixel8 CFR::BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
+Pixel8 BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -190,7 +191,7 @@ Pixel8 CFR::BaseTexture::getPixel8(size_type x, size_type y, size_type z) const
 	}
 }
 
-Pixel16 CFR::BaseTexture::getPixel16(size_type x, size_type y, size_type z) const
+Pixel16 BaseTexture::getPixel16(size_type x, size_type y, size_type z) const
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -201,7 +202,7 @@ Pixel16 CFR::BaseTexture::getPixel16(size_type x, size_type y, size_type z) cons
 	}
 }
 
-Pixel32 CFR::BaseTexture::getPixel32(size_type x, size_type y, size_type z) const
+Pixel32 BaseTexture::getPixel32(size_type x, size_type y, size_type z) const
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -212,7 +213,7 @@ Pixel32 CFR::BaseTexture::getPixel32(size_type x, size_type y, size_type z) cons
 	}
 }
 
-void CFR::BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
+void BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -222,7 +223,7 @@ void CFR::BaseTexture::setPixel(Uint32 p, size_type x, size_type y, size_type z)
 	}
 }
 
-void CFR::BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
+void BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -232,7 +233,7 @@ void CFR::BaseTexture::setPixel8(Pixel8 p, size_type x, size_type y, size_type z
 	}
 }
 
-void CFR::BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
+void BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {
@@ -242,7 +243,7 @@ void CFR::BaseTexture::setPixel16(Pixel16 p, size_type x, size_type y, size_type
 	}
 }
 
-void CFR::BaseTexture::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
+void BaseTexture::setPixel32(Pixel32 p, size_type x, size_type y, size_type z)
 {
 	size_type offset = getOffset(x, y, z);
 	switch (bytes) {

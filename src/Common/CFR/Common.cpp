@@ -10,7 +10,8 @@ using CFR::Pixel32;
 using CFR::Vec2;
 using CFR::Vec3;
 using CFR::Vertex;
-
+using CFR::Exception;
+typedef std::hash<Vertex>::result_type VertexHashType;
 
 
 /* Conversions */
@@ -56,7 +57,7 @@ inline Uint32 toPixel (Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 
 
 
-/* CFR::Pixel8 */
+/* Pixel8 */
  
 Pixel8::Pixel8(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 : r(r), g(g), b(b), a(a)
@@ -83,7 +84,7 @@ Pixel32 Pixel8::pixel32() const
 
 
 
-/* CFR::Pixel16 */
+/* Pixel16 */
 
 Pixel16::Pixel16(Uint16 r, Uint16 g, Uint16 b, Uint16 a)
 : r(r), g(g), b(b), a(a)
@@ -110,7 +111,7 @@ Pixel32 Pixel16::pixel32() const
 
 
 
-/* CFR::Pixel32 */
+/* Pixel32 */
 
 Pixel32::Pixel32(Uint32 r, Uint32 g, Uint32 b, Uint32 a)
 : r(r), g(g), b(b), a(a)
@@ -137,33 +138,20 @@ Pixel16 Pixel32::pixel16() const
 
 
 
-/* CFR::Vertex */
+/* Vertex */
 
-Vec2::Vec2(float x, float y)
-: x(x), y(y),
-  packX(*reinterpret_cast<Uint32*>(&x)),
-  packY(*reinterpret_cast<Uint32*>(&y))
-{}
-
-Vec3::Vec3(float x, float y, float z)
-: x(x), y(y), z(z),
-  packX(*reinterpret_cast<Uint32*>(&x)),
-  packY(*reinterpret_cast<Uint32*>(&y)),
-  packZ(*reinterpret_cast<Uint32*>(&z)) 
-{}
-
-bool Vertex::operator <(const CFR::Vertex &obj) const
+bool Vertex::operator <(const Vertex &obj) const
 {
-	std::hash<Vertex>::result_type hashA = std::hash<Vertex>()(*this);
-	std::hash<Vertex>::result_type hashB = std::hash<Vertex>()(obj);
+	VertexHashType hashA = std::hash<Vertex>()(*this);
+	VertexHashType hashB = std::hash<Vertex>()(obj);
 	if (hashA == hashB) {
-		return std::equal_to<CFR::Vertex>()(*this, obj);
+		return std::equal_to<Vertex>()(*this, obj);
 	} else {
 		return hashA < hashB;
 	}
 }
 
-bool Vertex::operator==(const CFR::Vertex &b) const
+bool Vertex::operator==(const Vertex &b) const
 {
 	const Vertex& a = *this;
 	return
@@ -178,12 +166,10 @@ bool Vertex::operator==(const CFR::Vertex &b) const
 		&& a.tangent.packX  == b.tangent.packX
 		&& a.tangent.packY  == b.tangent.packY
 		&& a.tangent.packZ  == b.tangent.packZ
-		&& a.binormal.packX == b.binormal.packX
-		&& a.binormal.packY == b.binormal.packY
-		&& a.binormal.packZ == b.binormal.packZ;
+		&& a.tangent.packW  == b.tangent.packW;
 }
 
-std::hash<Vertex>::result_type std::hash<Vertex>::operator()(Vertex const& v) const
+VertexHashType std::hash<Vertex>::operator()(Vertex const& v) const
 {
 	std::hash<Uint32> hash;
 	return
@@ -198,20 +184,18 @@ std::hash<Vertex>::result_type std::hash<Vertex>::operator()(Vertex const& v) co
 		^ (hash(v.tangent.packX)  * 0xEF7A6E89)
 		^ (hash(v.tangent.packY)  * 0xAE028975)
 		^ (hash(v.tangent.packZ)  * 0x07EECD6F)
-		^ (hash(v.binormal.packX) * 0xF380DC15)
-		^ (hash(v.binormal.packY) * 0xE17BBD23)
-		^ (hash(v.binormal.packZ) * 0xBC154D09);
+		^ (hash(v.tangent.packW)  * 0xF380DC15);
 }
 
 
 
-/* CFR::Exception */
+/* Exception */
 
-CFR::Exception::Exception(const std::string &info)
+Exception::Exception(const std::string &info)
 : info(info)
 {}
 
-const char* CFR::Exception::what() const throw()
+const char* Exception::what() const throw()
 {
 	return info.c_str();
 }

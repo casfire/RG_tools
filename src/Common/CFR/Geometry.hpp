@@ -44,21 +44,19 @@ namespace CFR {
 		
 		/* Override vertex insertion */
 		Uint32 pushVertex(const Vertex &v) override;
-		Uint32 addVertex(const Vertex &v) override;
+		Uint32 addVertex (const Vertex &v) override;
 		
 		/* Set attribute export type */
 		void setTypePosition(Uint8 type);
 		void setTypeTexcoord(Uint8 type);
 		void setTypeNormal  (Uint8 type);
 		void setTypeTangent (Uint8 type);
-		void setTypeBinormal(Uint8 type);
 		
 		/* Get attribute export type */
 		Uint8 getTypePosition() const;
 		Uint8 getTypeTexcoord() const;
 		Uint8 getTypeNormal()   const;
 		Uint8 getTypeTangent()  const;
-		Uint8 getTypeBinormal() const;
 		
 		/* Stream insertion/extraction */
 		friend std::istream& ::operator>>(std::istream&, Geometry &obj);
@@ -91,9 +89,8 @@ namespace CFR {
 		Uint8  attribPosition[2]; // Vertex position (3 dimensions)
 		Uint8  attribTexCoord[2]; // Vertex UV       (2 dimensions)
 		Uint8  attribNormal  [2]; // Vertex normal   (3 dimensions)
-		Uint8  attribTangent [2]; // Vertex tangent  (3 dimensions)
-		Uint8  attribBinormal[2]; // Vertex binormal (3 dimensions)
-		Uint8  unused[4];
+		Uint8  attribTangent [2]; // Vertex tangent  (4 dimensions)
+		Uint8  unused[6];
 		Uint8  vertices[countVertices * bytesPerVertex ];
 		Uint8  elements[countElements * bytesPerElement];
 		
@@ -101,7 +98,7 @@ namespace CFR {
 			attribute[0] = Byte offset within a vertex
 			attribute[1] = Attribute type
 			If offset or type is 0xFF, the attribute isn't used
-			
+		
 		Attribute type:
 			Normalize     = type & 0b10000000
 			Variable type = type & 0b01111111
@@ -116,6 +113,10 @@ namespace CFR {
 			6  - Float          (GL_FLOAT)
 			10 - Double         (GL_DOUBLE)
 			11 - Half float     (GL_HALF_FLOAT)
+		
+		Tangent space:
+			Fourth tangent dimension is either 1 or -1
+			Binormal = cross(tangent.xyz, normal) * tangent.w
 		
 	*/
 	

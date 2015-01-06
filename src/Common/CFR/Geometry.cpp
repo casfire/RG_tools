@@ -9,6 +9,7 @@ using CFR::Uint8;
 using CFR::Uint16;
 using CFR::Uint32;
 using CFR::Vertex;
+using CFR::Exception;
 using CFR::TYPE_DISABLE;
 using CFR::TYPE_FLOAT;
 using CFR::TYPE_HALF_FLOAT;
@@ -106,7 +107,7 @@ inline Uint32 packFloat(float v, Uint8 type) {
 
 
 
-/* CFR::Geometry */
+/* Geometry */
 
 Geometry::Geometry()
 : BaseGeometry()
@@ -125,7 +126,7 @@ void Geometry::loadFromFile(const std::string &file)
 		stream >> *this;
 		stream.close();
 	} catch (std::ios::failure &fail) {
-		throw CFR::Exception("IO error: " + std::string(fail.what()));
+		throw Exception("IO error: " + std::string(fail.what()));
 	}
 }
 
@@ -138,7 +139,7 @@ void Geometry::saveToFile(const std::string &file) const
 		stream << *this;
 		stream.close();
 	} catch (std::ios::failure &fail) {
-		throw CFR::Exception("IO error: " + std::string(fail.what()));
+		throw Exception("IO error: " + std::string(fail.what()));
 	}
 }
 
@@ -155,9 +156,7 @@ Vertex Geometry::compressVertex(Vertex v)
 	v.tangent.packX  = packFloat(v.tangent.x,  typeTangent);
 	v.tangent.packY  = packFloat(v.tangent.y,  typeTangent);
 	v.tangent.packZ  = packFloat(v.tangent.z,  typeTangent);
-	v.binormal.packX = packFloat(v.binormal.x, typeBinormal);
-	v.binormal.packY = packFloat(v.binormal.y, typeBinormal);
-	v.binormal.packZ = packFloat(v.binormal.z, typeBinormal);
+	v.tangent.packW  = packFloat(v.tangent.w,  typeTangent);
 	return v;
 }
 
@@ -174,7 +173,7 @@ Uint32 Geometry::addVertex(const Vertex &v)
 void Geometry::setTypePosition(Uint8 type)
 {
 	if (!typeIsValid(type)) {
-		throw CFR::Exception("Invalid position type.");
+		throw Exception("Invalid position type.");
 	}
 	typePosition = type;
 }
@@ -182,7 +181,7 @@ void Geometry::setTypePosition(Uint8 type)
 void Geometry::setTypeTexcoord(Uint8 type)
 {
 	if (!typeIsValid(type)) {
-		throw CFR::Exception("Invalid texcoord type.");
+		throw Exception("Invalid texcoord type.");
 	}
 	typeTexcoord = type;
 }
@@ -190,7 +189,7 @@ void Geometry::setTypeTexcoord(Uint8 type)
 void Geometry::setTypeNormal(Uint8 type)
 {
 	if (!typeIsValid(type)) {
-		throw CFR::Exception("Invalid normal type.");
+		throw Exception("Invalid normal type.");
 	}
 	typeNormal = type;
 }
@@ -198,17 +197,9 @@ void Geometry::setTypeNormal(Uint8 type)
 void Geometry::setTypeTangent(Uint8 type)
 {
 	if (!typeIsValid(type)) {
-		throw CFR::Exception("Invalid tangent type.");
+		throw Exception("Invalid tangent type.");
 	}
 	typeTangent = type;
-}
-
-void Geometry::setTypeBinormal(Uint8 type)
-{
-	if (!typeIsValid(type)) {
-		throw CFR::Exception("Invalid binormal type.");
-	}
-	typeBinormal = type;
 }
 
 Uint8 Geometry::getTypePosition() const
@@ -229,11 +220,6 @@ Uint8 Geometry::getTypeNormal() const
 Uint8 Geometry::getTypeTangent() const
 {
 	return typeTangent;
-}
-
-Uint8 Geometry::getTypeBinormal() const
-{
-	return typeBinormal;
 }
 
 
@@ -307,12 +293,12 @@ inline void writeFloat(std::ostream &out, float v, Uint8 type) {
 	}
 }
 
-std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
+std::istream& operator>>(std::istream& in, Geometry& obj)
 {
 	if (read32(in) != 0x47524643) {
-		throw CFR::Exception("Invalid magic number.");
+		throw Exception("Invalid magic number.");
 	} else if (read32(in) != 1) {
-		throw CFR::Exception("Invalid version.");
+		throw Exception("Invalid version.");
 	}
 	
 	Uint32 countElements   = read32(in);
@@ -328,12 +314,10 @@ std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 	Uint8   typeNormal   = read8(in);
 	Uint8 offsetTangent  = read8(in);
 	Uint8   typeTangent  = read8(in);
-	Uint8 offsetBinormal = read8(in);
-	Uint8   typeBinormal = read8(in);
 	in.ignore(4);
 	
 	if (bytesPerElement == 0 || bytesPerElement == 3 || bytesPerElement > 4) {
-		throw CFR::Exception("Invalid bytes per element.");
+		throw Exception("Invalid bytes per element.");
 	}
 	
 	obj.clear();
@@ -341,7 +325,6 @@ std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 	obj.setTypeTexcoord(typeTexcoord);
 	obj.setTypeNormal  (typeNormal);
 	obj.setTypeTangent (typeTangent);
-	obj.setTypeBinormal(typeBinormal);
 	obj.reserveElements(countElements);
 	obj.reserveVertices(countVertices);
 	
@@ -358,9 +341,7 @@ std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 		vertex.tangent.x  = readFloat(in, typeTangent);
 		vertex.tangent.y  = readFloat(in, typeTangent);
 		vertex.tangent.z  = readFloat(in, typeTangent);
-		vertex.binormal.x = readFloat(in, typeBinormal);
-		vertex.binormal.y = readFloat(in, typeBinormal);
-		vertex.binormal.z = readFloat(in, typeBinormal);
+		vertex.tangent.w  = readFloat(in, typeTangent);
 		obj.pushVertex(vertex);
 	}
 	
@@ -381,36 +362,33 @@ std::istream& operator>>(std::istream& in, CFR::Geometry& obj)
 	(void) offsetTexcoord;
 	(void) offsetNormal;
 	(void) offsetTangent;
-	(void) offsetBinormal;
 	
 	return in;
 }
 
-std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
+std::ostream& operator<<(std::ostream& out, const Geometry& obj)
 {
 	if (obj.getVertexCount() > 0xFFFFFFFF) {
-		throw CFR::Exception("Too many vertices.");
+		throw Exception("Too many vertices.");
 	} else if (obj.getElementCount() > 0xFFFFFFFF) {
-		throw CFR::Exception("Too many elements.");
+		throw Exception("Too many elements.");
 	}
 	
 	Uint8 sizePosition = 3 * typeGetSize(obj.typePosition);
 	Uint8 sizeTexcoord = 2 * typeGetSize(obj.typeTexcoord);
 	Uint8 sizeNormal   = 3 * typeGetSize(obj.typeNormal);
-	Uint8 sizeTangent  = 3 * typeGetSize(obj.typeTangent);
-	Uint8 sizeBinormal = 3 * typeGetSize(obj.typeBinormal);
+	Uint8 sizeTangent  = 4 * typeGetSize(obj.typeTangent);
 	
 	Uint8 offsetPosition = 0;
 	Uint8 offsetTexcoord = offsetPosition + sizePosition;
 	Uint8 offsetNormal   = offsetTexcoord + sizeTexcoord;
 	Uint8 offsetTangent  = offsetNormal   + sizeNormal;
-	Uint8 offsetBinormal = offsetTangent  + sizeBinormal;
 	
 	Uint32 countElements   = obj.getElementCount();
 	Uint32 countVertices   = obj.getVertexCount();
 	Uint8  bytesPerVertex =
 		sizePosition + sizeTexcoord +
-		sizeNormal   + sizeTangent  + sizeBinormal;
+		sizeNormal   + sizeTangent;
 	Uint8  bytesPerElement = 4;
 	
 	if (obj.getElementMax() <= 0xFF )  bytesPerElement = 1;
@@ -431,9 +409,7 @@ std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
 	write8 (out, obj.typeNormal);
 	write8 (out,   offsetTangent);
 	write8 (out, obj.typeTangent);
-	write8 (out,   offsetBinormal);
-	write8 (out, obj.typeBinormal);
-	write32(out, 0);
+	for (int i = 0; i < 6; i++) write8 (out, 0);
 	
 	size_type vertexCount = obj.getVertexCount();
 	for (size_type i = 0; i < vertexCount; i++) {
@@ -449,9 +425,7 @@ std::ostream& operator<<(std::ostream& out, const CFR::Geometry& obj)
 		writeFloat(out, vertex.tangent.x,  obj.typeTangent);
 		writeFloat(out, vertex.tangent.y,  obj.typeTangent);
 		writeFloat(out, vertex.tangent.z,  obj.typeTangent);
-		writeFloat(out, vertex.binormal.x, obj.typeBinormal);
-		writeFloat(out, vertex.binormal.y, obj.typeBinormal);
-		writeFloat(out, vertex.binormal.z, obj.typeBinormal);
+		writeFloat(out, vertex.tangent.w,  obj.typeTangent);
 	}
 	
 	size_type elementCount = obj.getElementCount();

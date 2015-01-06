@@ -20,8 +20,10 @@ namespace CFR {
 	struct Pixel8;
 	struct Pixel16;
 	struct Pixel32;
+	struct Vec1;
 	struct Vec2;
 	struct Vec3;
+	struct Vec4;
 	struct Vertex;
 	class  Exception;
 	class  BaseTexture;
@@ -61,25 +63,18 @@ namespace CFR {
 		Pixel16 pixel16() const;
 	};
 	
-	struct Vec2 {
-		float x, y;
-		Uint32 packX, packY;
-		Vec2(float x = 0.f, float y = 0.f);
-	};
-	
-	struct Vec3 {
-		float x, y, z;
-		Uint32 packX, packY, packZ;
-		Vec3(float x = 0.f, float y = 0.f, float z = 0.f);
-	};
+	/* Vectors */
+	struct Vec1               { float x = 0.f; Uint32 packX = 0; };
+	struct Vec2 : public Vec1 { float y = 0.f; Uint32 packY = 0; };
+	struct Vec3 : public Vec2 { float z = 0.f; Uint32 packZ = 0; };
+	struct Vec4 : public Vec3 { float w = 1.f; Uint32 packW = 0; };
 	
 	/* Geometry vertex */
 	struct Vertex {
 		Vec3 position;
 		Vec2 texcoord;
 		Vec3 normal;
-		Vec3 tangent;
-		Vec3 binormal;
+		Vec4 tangent;
 		bool operator <(const CFR::Vertex&) const;
 		bool operator==(const CFR::Vertex&) const;
 	};
