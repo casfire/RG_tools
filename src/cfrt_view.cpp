@@ -1,13 +1,16 @@
+#include "Common/Common.hpp"
+#include <iostream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
-#include "Common/Common.hpp"
+
+sf::Image textureToImage(const CFR::BaseTexture &from, CFR::size_type z = 0);
 
 int main(int argc, char* args[]) {
 	
 	/* Check arguments */
 	if (argc != 2) {
-		Popup("Error!", "No input file.").show();
-		return 0;
+		std::cerr << "Error: No input file.\n";
+		return -1;
 	}
 	
 	/* Load texture */
@@ -15,8 +18,8 @@ int main(int argc, char* args[]) {
 	try {
 		cfrt.loadFromFile(args[1]);
 	} catch (CFR::Exception &fail) {
-		Popup("Error!", fail.what()).show();
-		return 0;
+		std::cerr << "Error: " << fail.what() << "\n";
+		return -1;
 	}
 	
 	/* Find suitable resolution */
@@ -91,4 +94,27 @@ int main(int argc, char* args[]) {
 	}
 	
 	return 0;
+}
+
+sf::Image textureToImage(const CFR::BaseTexture &from, CFR::size_type z)
+{
+	std::vector<std::uint8_t> pixels(from.getWidth() * from.getHeight() * 4);
+	for (std::size_t y = 0; y < from.getHeight(); y++) {
+		for (std::size_t x = 0; x < from.getWidth(); x++) {
+			std::size_t offset = 4 * x + 4 * y * from.getWidth();
+			CFR::Pixel8 pixel = from.getPixel8(x, y, z);
+			if (from.getChannels() == 1) {
+				pixel.g = pixel.r;
+				pixel.b = pixel.r;
+			}
+			pixels[offset + 0] = pixel.r;
+			pixels[offset + 1] = pixel.g;
+			pixels[offset + 2] = pixel.b;
+			pixels[offset + 3] = pixel.a;
+		}
+	}
+	const sf::Uint8 *data = reinterpret_cast<const sf::Uint8*>(pixels.data());
+	sf::Image image;
+	image.create(from.getWidth(), from.getHeight(), data);
+	return image;
 }

@@ -1,46 +1,104 @@
-#include <SFML/Graphics.hpp>
 #include "Common/Common.hpp"
+#include <iostream>
+#include <FreeImage.h>
 
-bool convert(const std::string &path) {
+bool convert(const std::string &filename) {
 	
-	std::string file = getSuffix(getSuffix(path, '\\'), '/');
-	std::string cfrtFile = getPrefix(path, '.') + ".cfrt";
+	std::string file    = removePath(filename);
+	std::string outFile = getPrefix(filename, '.') + ".cfrt";
 	
-	/* Load image with SFML */
-	sf::Image image;
-	if (!image.loadFromFile(path)) {
-		Popup("Error!", "Failed to load " + to_string(file) + " as image.").show();
+	/* Retrieve file format */
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(filename.c_str(), 0);
+	if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(filename.c_str());
+	if (fif == FIF_UNKNOWN) {
+		std::cout << "Unknown file format " << file << std::endl;
 		return false;
 	}
 	
-	/* Create CFRT */
-	CFR::Texture cfrt(
-		image.getSize().x, image.getSize().y, 1,
-		findChannels(image), 1
-	);
+	/* Load image */
+	FIBITMAP *dib = nullptr;
+	if (FreeImage_FIFSupportsReading(fif)) dib = FreeImage_Load(fif, filename.c_str());
+	if (!dib) {
+		std::cout << "Failed to load " << file << std::endl;
+		return false;
+	}
 	
-	/* Set pixels */
-	sf::Vector2u size = image.getSize();
-	for (unsigned y = 0; y < size.y; y++) {
-		for (unsigned x = 0; x < size.x; x++) {
-			sf::Color pixel = image.getPixel(x, y);
-			cfrt.setPixel8(
-				CFR::Pixel8(pixel.r, pixel.g, pixel.b, pixel.a),
-				x, y, 0
-			);
+	/* Convert to standard format if necessary */
+	if (FreeImage_GetImageType(dib) != FIT_BITMAP) {
+		FIBITMAP *tmp = dib;
+		dib = FreeImage_ConvertToStandardType(dib);
+		FreeImage_Unload(tmp);
+		if (!dib) {
+			std::cout << "Failed to convert " << file << " to standard type." << std::endl;
+			return false;
 		}
 	}
 	
-	/* Save */
-	try {
-		cfrt.saveToFile(cfrtFile);
-	} catch (CFR::Exception &fail) {
-		Popup(
-			"Error!",
-			"Failed to save " + removePath(cfrtFile)
-			+ ": " + to_string(fail.what())
-		).show();
+	/* Convert bpp if needed */
+	unsigned int bpp = FreeImage_GetBPP(dib);
+	if (bpp <= 8) {
+		FIBITMAP *tmp = dib;
+		dib = FreeImage_ConvertToGreyscale(dib);
+		FreeImage_Unload(tmp);
+		bpp = 8;
+		if (!dib || FreeImage_GetBPP(dib) != 8) bpp = 0;
+	} else if (bpp > 32) {
+		FIBITMAP *tmp = dib;
+		dib = FreeImage_ConvertTo32Bits(dib);
+		FreeImage_Unload(tmp);
+		bpp = 32;
+		if (!dib || FreeImage_GetBPP(dib) != 32) bpp = 0;
+	}
+	
+	/* Get image information */
+	unsigned int width  = FreeImage_GetWidth(dib);
+	unsigned int height = FreeImage_GetHeight(dib);
+	unsigned int bytes    = 1;
+	unsigned int channels = 0;
+	switch (bpp) {
+		case 8:  channels = 1; break;
+		case 24: channels = 3; break;
+		case 32: channels = 4; break;
+		default: bpp = 0;
+	}
+	
+	/* Check if image is valid */
+	if (!dib || bpp == 0 || width == 0 || height == 0 || !FreeImage_HasPixels(dib)) {
+		if (dib) FreeImage_Unload(dib);
+		std::cout << "Invalid image " << file << std::endl;
 		return false;
+	}
+	
+	std::cout << file << " Loaded. Converting.\n";
+	
+	/* Create CFR texture */
+	CFR::Texture texture(
+		width, height, 1,
+		channels, bytes
+	);
+	
+	/* Set texture pixels */
+	for (unsigned int y = 0; y < height; y++) {
+		BYTE* bits = FreeImage_GetScanLine(dib, y);
+		for (unsigned int x = 0; x < width; x++) {
+			CFR::Pixel8 pixel(0, 0, 0, 0);
+			BYTE *p = bits + (channels * x);
+			if (channels >= 1) pixel.r = p[FI_RGBA_RED];
+			if (channels >= 2) pixel.g = p[FI_RGBA_GREEN];
+			if (channels >= 3) pixel.b = p[FI_RGBA_BLUE];
+			if (channels >= 4) pixel.a = p[FI_RGBA_ALPHA];
+			texture.setPixel8(pixel, x, y, 0);
+		}
+	}
+	
+	/* Unload image */
+	FreeImage_Unload(dib);
+	
+	/* Save texture */
+	try {
+		texture.saveToFile(outFile);
+	} catch (CFR::Exception &fail) {
+		std::cout << "Failed to save " << removePath(outFile) << ": " << fail.what() << std::endl;
 	}
 	
 	return true;
@@ -50,24 +108,28 @@ int main(int argc, char* args[]) {
 	
 	/* Check arguments */
 	if (argc <= 1) {
-		Popup("Error!", "No input files.").show();
-		return 0;
+		std::cerr << "Error: No input files.\n";
+		std::cin.get();
+		return -1;
 	}
+	
+	/* Initialize FreeImage */
+	#ifdef FREEIMAGE_LIB
+		FreeImage_Initialise();
+	#endif
+	std::cout << "Using FreeImage version " << FreeImage_GetVersion() << "\n";
 	
 	/* Convert all files */
-	bool status = true;
-	for (int i = 1; i < argc; i++) {
-		if (!convert(args[i])) status = false;
-	}
+	for (int i = 1; i < argc; i++) convert(args[i]);
 	
-	/* End message */
-	if (status) {
-		if (argc == 2) {
-			Popup("CFRT Converter", "Converted.").show();
-		} else {
-			Popup("CFRT Converter", "All files converted.").show();
-		}
-	}
+	/* Deinitialize FreeImage */
+	#ifdef FREEIMAGE_LIB
+		FreeImage_DeInitialise();
+	#endif
+	std::cout << "\nFinished." << std::endl;
+	
+	/* Wait for input */
+	std::cin.get();
 	
 	return 0;
 }
