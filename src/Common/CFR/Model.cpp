@@ -50,6 +50,7 @@ std::ostream& operator<<(std::ostream& out, const Model& obj)
 	std::vector<ModelObject> copy(obj.objects);
 	for (std::size_t i = 0; i < copy.size(); i++) {
 		const ModelObject& object = copy[i];
+		if (object.end <= object.start) continue;
 		if (!object.diffuse_map.empty()) {
 			out << "diffuse_map " << object.diffuse_map << "\n";
 		} else {
