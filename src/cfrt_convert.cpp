@@ -79,7 +79,7 @@ bool convert(const std::string &filename) {
 	
 	/* Set texture pixels */
 	for (unsigned int y = 0; y < height; y++) {
-		BYTE* bits = FreeImage_GetScanLine(dib, y);
+		BYTE* bits = FreeImage_GetScanLine(dib, height - y);
 		for (unsigned int x = 0; x < width; x++) {
 			CFR::Pixel8 pixel(0, 0, 0, 0);
 			BYTE *p = bits + (channels * x);
