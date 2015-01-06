@@ -12,16 +12,18 @@ bool flip(std::string filename) {
 		std::cin.get();
 		return false;
 	}
+	std::cout << removePath(filename) << " loaded. Flipping.\n";
 	
 	/* Flip */
 	CFR::Texture flipped(cfrt);
 	for (CFR::size_type y = 0; y < cfrt.getHeight(); y++) {
 		for (CFR::size_type x = 0; x < cfrt.getWidth(); x++) {
 			for (CFR::size_type z = 0; z < cfrt.getDepth(); z++) {
-				flipped.setPixel32(cfrt.getPixel32(x, y, z), x, cfrt.getHeight() - y, z);
+				flipped.setPixel32(cfrt.getPixel32(x, y, z), x, cfrt.getHeight() - y - 1, z);
 			}
 		}
 	}
+	std::cout << removePath(filename) << " flipped. Saving.\n";
 	
 	/* Save */
 	try {
@@ -32,7 +34,6 @@ bool flip(std::string filename) {
 		return false;
 	}
 	
-	std::cout << "Flipped " << removePath(filename) << std::endl;
 	return true;
 }
 
