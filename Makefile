@@ -17,12 +17,17 @@ TARGET_CFRT_CONVERT=cfrt_convert
   OBJS_CFRT_CONVERT=$(patsubst %,build/%.o,$(basename $(FILES_CFRT_CONVERT:src/%=%)))
 LFLAGS_CFRT_CONVERT=-static -lFreeImage
 
+TARGET_CFRT_FLIP=cfrt_flip
+ FILES_CFRT_FLIP=$(FILES) src/cfrt_flip.cpp
+  OBJS_CFRT_FLIP=$(patsubst %,build/%.o,$(basename $(FILES_CFRT_FLIP:src/%=%)))
+LFLAGS_CFRT_FLIP=-static
+
 TARGET_OBJ_CONVERT=obj_convert
  FILES_OBJ_CONVERT=$(FILES) src/obj_convert.cpp
   OBJS_OBJ_CONVERT=$(patsubst %,build/%.o,$(basename $(FILES_OBJ_CONVERT:src/%=%)))
 LFLAGS_OBJ_CONVERT=-static
 
-TARGETS=$(TARGET_CFRT_VIEW) $(TARGET_CFRT_CONVERT) $(TARGET_OBJ_CONVERT)
+TARGETS=$(TARGET_CFRT_VIEW) $(TARGET_CFRT_CONVERT) $(TARGET_CFRT_FLIP) $(TARGET_OBJ_CONVERT)
 OBJS=$(OBJS_CFRT_VIEW) $(OBJS_CFRT_CONVERT)
 
 .PHONY: all clean
@@ -33,6 +38,9 @@ $(TARGET_CFRT_VIEW): $(OBJS_CFRT_VIEW)
 $(TARGET_CFRT_CONVERT): $(OBJS_CFRT_CONVERT)
 	@echo "Linking "$@
 	@g++ $^ $(LFLAGS_CFRT_CONVERT) -o $@
+$(TARGET_CFRT_FLIP): $(OBJS_CFRT_FLIP)
+	@echo "Linking "$@
+	@g++ $^ $(LFLAGS_CFRT_FLIP) -o $@
 $(TARGET_OBJ_CONVERT): $(OBJS_OBJ_CONVERT)
 	@echo "Linking "$@
 	@g++ $^ $(LFLAGS_OBJ_CONVERT) -o $@

@@ -97,7 +97,7 @@ BaseTexture::BaseTexture()
 
 BaseTexture::BaseTexture(const BaseTexture &copy)
 : width(copy.width), height(copy.height), depth(copy.depth),
-  channels(copy.channels), bytes(copy.bytes)
+  channels(copy.channels), bytes(copy.bytes), pixels(copy.pixels)
 {}
 
 BaseTexture::BaseTexture(
