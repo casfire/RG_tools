@@ -30,6 +30,8 @@ namespace CFR {
 	class  Texture;
 	class  BaseGeometry;
 	class  Geometry;
+	class  ModelObject;
+	class  Model;
 	
 	
 	

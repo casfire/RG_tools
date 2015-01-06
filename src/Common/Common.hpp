@@ -4,6 +4,7 @@
 
 #include "CFR/Texture.hpp"
 #include "CFR/Geometry.hpp"
+#include "CFR/Model.hpp"
 #include "OBJ/ElementReader.hpp"
 #include "OBJ/MaterialReader.hpp"
 #include <string>

@@ -6,11 +6,16 @@
 
 struct Converter : public OBJ::ElementReader {
 	
-	std::time_t lastReport = 0;
 	CFR::Geometry &geometry;
-	std::size_t lines;
+	CFR::Model    &model;
+	std::time_t lastReport = 0;
+	std::size_t lines      = 0;
+	OBJ::MaterialSaver materials;
+	OBJ::Material      material;
+	CFR::size_type     lastElements = 0;
+	std::string        lastMaterial;
 	
-	Converter(CFR::Geometry &geometry);
+	Converter(CFR::Geometry &geometry, CFR::Model &model);
 	bool parse(OBJ::Vertex::Geometry& v) override;
 	bool parse(OBJ::Grouping::Groups& g) override;
 	bool parse(OBJ::Grouping::Smoothing& g) override;
@@ -33,7 +38,7 @@ int main(int argc, char* args[]) {
 	}
 	
 	/* Output files */
-	//std::string fileModel    = getPrefix(args[1], '.') + ".cfrm";
+	std::string fileModel    = getPrefix(args[1], '.') + ".cfrm";
 	std::string fileGeometry = getPrefix(args[1], '.') + ".cfrg";
 	
 	/* Find number of lines */
@@ -51,8 +56,12 @@ int main(int argc, char* args[]) {
 	geometry.setTypeNormal  (CFR::TYPE_HALF_FLOAT);
 	geometry.setTypeTangent (CFR::TYPE_HALF_FLOAT);
 	
+	/* Model */
+	CFR::Model model(removePath(fileGeometry));
+	model.setHeader("CFR Model generated from " + to_string(removePath(args[1])));
+	
 	/* Read obj file */
-	Converter c(geometry);
+	Converter c(geometry, model);
 	c.lines = lines;
 	c.read(args[1], std::cout);
 	
@@ -66,6 +75,10 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 	
+	/* Save model */
+	std::cout << "Saving model to " << removePath(fileModel) << std::endl;
+	model.saveToFile(fileModel);
+	
 	/* Wait for input */
 	std::cout << "\nFinished." << std::endl;
 	std::cin.get();
@@ -76,12 +89,10 @@ int main(int argc, char* args[]) {
 CFR::Vec3 createVec3(float x, float y, float z) { CFR::Vec3 vec; vec.x = x; vec.y = y; vec.z = z; return vec; }
 CFR::Vec2 createVec2(float x, float y) { CFR::Vec2 vec; vec.x = x; vec.y = y; return vec; }
 
-Converter::Converter(CFR::Geometry &geometry) : geometry(geometry) {}
+Converter::Converter(CFR::Geometry &geometry, CFR::Model &model) : geometry(geometry), model(model) {}
 bool Converter::parse(OBJ::Vertex::Geometry&  v) { report(false); return ElementReader::parse(v); }
 bool Converter::parse(OBJ::Grouping::Groups&   ) { report(false); return true; }
 bool Converter::parse(OBJ::Grouping::Smoothing&) { report(false); return true; }
-bool Converter::parse(OBJ::Render::UseMaterial&) { report(false); return true; }
-bool Converter::parse(OBJ::Render::MaterialLib&) { report(false); return true; }
 bool Converter::parse(OBJ::Triangle &t) {
 	CFR::Vertex a, b, c;
 	a.position = createVec3(t.a.position.x, t.a.position.y, t.a.position.z);
@@ -157,7 +168,30 @@ void Converter::addTangent(CFR::Vertex &a, const CFR::Vertex &b, const CFR::Vert
 	a.tangent.z = tangent.z;
 	a.tangent.w = tangent.w;
 }
-void Converter::done() {}
+bool Converter::parse(OBJ::Render::UseMaterial &m) {
+	if (m.name.compare(lastMaterial) == 0) return true;
+	done();
+	material = materials.find(m.name);
+	lastMaterial = m.name;
+	report(false);
+	return true;
+}
+bool Converter::parse(OBJ::Render::MaterialLib &m) {
+	for (std::size_t i = 0; i < m.files.size(); i++) materials.read(m.files[i], std::cout);
+	std::cout << materials.size() << " Materials loaded.\n";
+	return true;
+}
+void Converter::done() {
+	CFR::size_type currentElements = geometry.getElementCount();
+	if (currentElements - lastElements == 0) return;
+	CFR::ModelObject object;
+	object.start = lastElements;
+	object.end   = currentElements;
+	if (material.hasDiffuse)    object.diffuse = createVec3(material.diffuse.r, material.diffuse.g, material.diffuse.b);
+	if (material.hasMapDiffuse) object.diffuse_map = material.mapDiffuse.file;
+	model.addObject(object);
+	lastElements = currentElements;
+}
 void Converter::report(bool force) {
 	std::time_t now = std::time(nullptr);
 	if (force || now > lastReport) {
