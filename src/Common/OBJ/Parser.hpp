@@ -52,7 +52,7 @@ namespace OBJ {
 	
 	
 	/* Base obj parser */
-	class OBJParser : public virtual TokenParser {
+	class OBJParser : public TokenParser {
 	protected:
 		
 		/* Vertex data */
@@ -92,7 +92,7 @@ namespace OBJ {
 	
 	
 	/* Base mtl parser */
-	class MTLParser : public virtual TokenParser {
+	class MTLParser : public TokenParser {
 	protected:
 		
 		virtual bool parse(MTL::NewMaterial& m);         // newmtl

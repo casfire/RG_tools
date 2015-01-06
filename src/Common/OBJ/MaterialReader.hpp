@@ -86,8 +86,16 @@ namespace OBJ {
 	class MaterialSaver : public MaterialReader {
 	public:
 		
+		/* Return material by name or throw std::out_of_range if not found */
 		const Material& find(const std::string &name) const;
+		
+		/* Check if material exists */
+		bool exists(const std::string &name) const;
+		
+		/* Delete all materials */
 		void clear();
+		
+		/* Get number of materials */
 		std::size_t size() const;
 		
 	protected:

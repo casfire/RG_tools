@@ -1,40 +1,42 @@
 #include "ElementReader.hpp"
 #include <cstddef> // std::size_t
 
-bool OBJ::ElementReader::parse(OBJ::Vertex::Geometry &v)
+using OBJ::ElementReader;
+
+bool ElementReader::parse(OBJ::Vertex::Geometry &v)
 {
 	geometry.push_back(v);
 	return true;
 }
 
-bool OBJ::ElementReader::parse(OBJ::Vertex::Texture &v)
+bool ElementReader::parse(OBJ::Vertex::Texture &v)
 {
 	texture.push_back(v);
 	return true;
 }
 
-bool OBJ::ElementReader::parse(OBJ::Vertex::Normal &v)
+bool ElementReader::parse(OBJ::Vertex::Normal &v)
 {
 	normal.push_back(v);
 	return true;
 }
 
-bool OBJ::ElementReader::parse(OBJ::Triangle&)
+bool ElementReader::parse(OBJ::Triangle&)
 {
 	return false;
 }
 
-bool OBJ::ElementReader::parse(Line&)
+bool ElementReader::parse(Line&)
 {
 	return false;
 }
 
-bool OBJ::ElementReader::parse(Point&)
+bool ElementReader::parse(Point&)
 {
 	return false;
 }
 
-bool OBJ::ElementReader::convert(OBJ::Element::FaceVertex &f, OBJ::TriangleVertex &e)
+bool ElementReader::convert(OBJ::Element::FaceVertex &f, OBJ::TriangleVertex &e)
 {
 	if (f.v < 0) f.v = 1 + geometry.size() + f.v;
 	if (static_cast<std::size_t>(f.v) > geometry.size() || f.v == 0) {
@@ -71,7 +73,7 @@ bool OBJ::ElementReader::convert(OBJ::Element::FaceVertex &f, OBJ::TriangleVerte
 	return true;
 }
 
-bool OBJ::ElementReader::convert(Element::LineVertex &f, LineVertex &e)
+bool ElementReader::convert(Element::LineVertex &f, LineVertex &e)
 {
 	if (f.v < 0) f.v = 1 + geometry.size() + f.v;
 	if (static_cast<std::size_t>(f.v) > geometry.size() || f.v == 0) {
@@ -96,7 +98,7 @@ bool OBJ::ElementReader::convert(Element::LineVertex &f, LineVertex &e)
 	return true;
 }
 
-bool OBJ::ElementReader::convert(Element::PointVertex &f, Point &e)
+bool ElementReader::convert(Element::PointVertex &f, Point &e)
 {
 	if (f.v < 0) f.v = 1 + geometry.size() + f.v;
 	if (static_cast<std::size_t>(f.v) > geometry.size() || f.v == 0) {
@@ -109,7 +111,7 @@ bool OBJ::ElementReader::convert(Element::PointVertex &f, Point &e)
 	return true;
 }
 
-bool OBJ::ElementReader::parse(Element::Face &e)
+bool ElementReader::parse(Element::Face &e)
 {
 	bool status = true;
 	for (std::size_t i = 2; i < e.size(); i++) {
@@ -126,7 +128,7 @@ bool OBJ::ElementReader::parse(Element::Face &e)
 	return status;
 }
 
-bool OBJ::ElementReader::parse(Element::Line &e)
+bool ElementReader::parse(Element::Line &e)
 {
 	bool status = true;
 	for (std::size_t i = 1; i < e.size(); i++) {
@@ -142,7 +144,7 @@ bool OBJ::ElementReader::parse(Element::Line &e)
 	return status;
 }
 
-bool OBJ::ElementReader::parse(Element::Point &e)
+bool ElementReader::parse(Element::Point &e)
 {
 	bool status = true;
 	for (std::size_t i = 0; i < e.size(); i++) {
