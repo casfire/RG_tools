@@ -15,14 +15,17 @@ namespace CFR {
 	
 	/* Model object */
 	struct ModelObject {
+		ModelObject();
 		size_type   start, end;
 		Vec3        diffuse;
 		std::string diffuse_map;
-		float       emit = 0.f;
-		float       specular_exp = 0.f;
-		float       specular = 0.5f;
+		std::string normal_map;
+		Vec3        specular;
 		std::string specular_map;
+		float       specular_exp;
 		std::string mask_map;
+		Vec3        emit;
+		std::string emit_map;
 	};
 	
 	
