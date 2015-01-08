@@ -187,8 +187,13 @@ void Converter::done() {
 	CFR::ModelObject object;
 	object.start = lastElements;
 	object.end   = currentElements;
-	if (material.hasDiffuse)    object.diffuse = createVec3(material.diffuse.r, material.diffuse.g, material.diffuse.b);
-	if (material.hasMapDiffuse) object.diffuse_map = material.mapDiffuse.file;
+	if (material.hasDiffuse)     object.diffuse = createVec3(material.diffuse.r, material.diffuse.g, material.diffuse.b);
+	if (material.hasMapDiffuse)  object.diffuse_map = material.mapDiffuse.file;
+	if (material.hasEmission)    object.emit = (material.emission.r + material.emission.g + material.emission.b) / 3.f;
+	if (material.hasSpecularExponent) object.specular_exp = material.specularExponent.value;
+	if (material.hasSpecular)    object.specular = (material.specular.r + material.specular.g + material.specular.b) / 3.f;
+	if (material.hasMapSpecular) object.specular_map = material.mapSpecular.file;
+	if (material.hasMapAlpha)    object.mask_map = material.mapAlpha.file;
 	model.addObject(object);
 	lastElements = currentElements;
 }

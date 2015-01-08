@@ -18,6 +18,11 @@ namespace CFR {
 		size_type   start, end;
 		Vec3        diffuse;
 		std::string diffuse_map;
+		float       emit = 0.f;
+		float       specular_exp = 0.f;
+		float       specular = 0.5f;
+		std::string specular_map;
+		std::string mask_map;
 	};
 	
 	
